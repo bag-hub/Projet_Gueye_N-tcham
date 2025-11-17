@@ -42,6 +42,11 @@ let touch  (fs : filesystem) (fichier_creer : name) : filesystem =
                      let new_file = File { name = fichier_creer; content = ""}
                                  {t_fil with children = new_file :: children} in
 
-                                 {fs with root = touch_fil fs.root}
+                                 {fs with root = touch_fil fs.root};;
+
+
+
+let ls(fs filesystem) filesystem = 
+    let rec ls_fich
 
               
