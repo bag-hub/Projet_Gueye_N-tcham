@@ -3,12 +3,21 @@ type name = Name of string
 
 type path = name list
 
-type file = { name: name; content: string }
+type file = { 
+  name: name; 
+  content: string 
+  }
 
-type directory = { name: name; children: node list }
+type directory = {
+   name: name; 
+   children: node list
+   }
 and node = File of file | Dir of directory
 
-type filesystem = { root: directory; current_path: path }
+type filesystem = { 
+  root: directory; 
+  current_path: path 
+   }
 
 
 
@@ -19,9 +28,13 @@ type filesystem = { root: directory; current_path: path }
 
 
 let init () =
-  let root_dir = { name = Name "/"; children = [] } in
+  let root_dir = { 
+    name = Name "/"; children = [] 
+    } in
   (* Le répertoire racine est le seul nom de répertoire qui peut contenir un '/' *)
-  { root = root_dir; current_path = [] }
+  { 
+    root = root_dir; 
+    current_path = [] }
 
 
 let path_to_string path =
