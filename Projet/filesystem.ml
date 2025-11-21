@@ -19,8 +19,13 @@ type filesystem = {
   current_path: path 
    }
 
-
-
+(*fs =
+/usr
+/texte.txt
+mkdir fs nouveau 
+fs = /usr
+      /texte.txt
+      /nouveau*)
 (* Les déclarations des deux types suivants sont mutuellement récursifs:
   - le type directory des répertoires est un enregistrement dont le champ children contient une liste de node
   - le type node est un type de données algébrique dont un des constructeurs encapsule une valeur de type directory
@@ -39,5 +44,26 @@ let init () =
 
 let path_to_string path =
   let names = List.map (fun (Name s) -> s) path in
-  String.concat "/" names
+  "/"^ (String.concat "/" names)
+let concat a b = match a,b with
+                  |Name a,Name b -> Name (a^b)
 
+(*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou makdir contient un "/"*)
+let isName str = 
+  let liste = String.split_on_char ' ' str 
+    in let rec aux l acc = match l,acc with
+        |[],(Some Name acc) ->Some (Name acc)
+        |x::xs,Some (Name acc) -> (match x with 
+                                    |Some (Name x)-> aux xs (Some (concat (Name acc) (Name x)))
+                                    |_-> None)
+        |_->None
+      in aux (List.map (fun x->(Some (Name x))) liste) (Some (Name ""))
+
+(*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
+let rec remove l_node node_name = match l_node with
+    |[] -> []
+    |x::xs -> begin
+      match x with
+        |File fl -> if fl.name=node_name then xs else File fl::(remove xs node_name)
+        |Dir _d -> x::(remove xs node_name)
+      end
