@@ -70,14 +70,14 @@ let touch file_name fs = match Filesystem.isName file_name with
 let ls fs = if fs.root.children = [] then print_endline "Ce répertoire vide"
     else begin 
     let rec aux l = match l with
-        |[]->print_string ""
+        |[]->print_endline ""
         |x::xs-> begin
             match x with 
                 |File fl-> begin match fl.name with 
                             | Name s->print_endline s; 
                                 aux xs end
                 |Dir d-> begin match d.name with 
-                            | Name s->print_endline s;
+                            | Name s->print_endline (s^"/");
                                 aux xs end
             end
     in aux fs.root.children
@@ -88,15 +88,15 @@ let cat file_name fs = let file_name' = Filesystem.isName file_name
     in match file_name' with
         |Some nm -> let node = estPresentBis nm fs.root.children 
             in begin match node with
-            |None -> print_string "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
+            |None -> print_endline "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
             |Some node -> begin
                             match node with 
                                 |File fl-> let str = fl.content in if str = "" then print_endline "Ce fichier est vide" 
                                                                     else print_endline str
-                                |Dir _d -> print_string "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire. Mais il y existe un dossier de ce nom"
+                                |Dir _d -> print_endline "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire. Mais il y existe un dossier de ce nom"
                         end
                     end
-        |None -> print_string "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
+        |None -> print_endline "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
 
 (*write file_name*)
 let write file_name str fs = 
@@ -114,43 +114,17 @@ let write file_name str fs =
                         end
     end
 
-
-(*write file_name
-let write file_name str fs = 
-    if not (estPresent (File {name=file_name;content=""}) fs.root.children) then failwith "Ce fichier est inexistant dans ce répertoire courant"
-    else let new_file = {fs.}
-
-Recupere les champs nom et chidren du repertoir courant qui est filesystem.ml et créer un nouveau repertoire rep_creer
-
-let mkdir (fs : filesystem) (rep_creer : name) : filesystem =  
-    let rec extac_dir  dir = match dir with
-        |{name; children} -> let verif_present =  estPresent (function
-            |Dir d when d.name = rep_creer -> true
-            |File f when f.name = rep_creer -> true
-            |_ -> false) children in 
-
-            if (verif_present) then 
-                failwith "Erreur : Un element a déja ce nom"
-            else 
-                let new_rep = Dir {
-                    name = rep_creer; children = []
-                } in {dir with children = new_rep :: children} in
-                {fs with root = extac_dir fs.root};;
-
-touch Création de fichier vide dans le repertoir courant filesystem
-let touch  (fs : filesystem) (fichier_creer : name) : filesystem = 
-   let rec touch_fil t_fil = match t_fil
-        |{name; children} -> let verif_touch = 
-               estPresent (function
-                 | Dir d when d.name = fichier_creer -> true
-                 | File f when f.name = fichier_creer -> true
-                 |_ -> false) children in
-
-                 if(verif_touch) then failwith "Deja present"
-                 else 
-                     let new_file = File { name = fichier_creer; content = ""}
-                                 {t_fil with children = new_file :: children} in
-
-                                 {fs with root = touch_fil fs.root};;
-
-let ls(fs filesystem*)
+(*qui permet de se déplacer dans l’arborescence en suivant le chemin
+relatif nomchemin pour modifier le chemin courant. Elle affiche une erreur si ce chemin
+relatif ne mène à aucun répertoire existant*)
+(*Cette fonction prends en paramétre le chemin où on veux se déplacer, elle retourne un couple true et *)
+(*ok/error constructor*)
+let cd nom_chemin root = 
+    let rec aux lst acc = 
+        match lst with 
+        |[] -> true,acc
+        |x::xs-> begin match Filesystem.search root.children (Name x) with
+            |None -> print_endline "cd : ce chemin est invalide"; false,acc
+            |Some y -> aux xs (acc@[y.name])
+            end
+    in aux nom_chemin []

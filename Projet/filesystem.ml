@@ -49,6 +49,7 @@ let concat a b = match a,b with
                   |Name a,Name b -> Name (a^b)
 
 (*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou makdir contient un "/"*)
+(*??????*)
 let isName str = 
   let liste = String.split_on_char ' ' str 
     in let rec aux l acc = match l,acc with
@@ -67,3 +68,14 @@ let rec remove l_node node_name = match l_node with
         |File fl -> if fl.name=node_name then xs else File fl::(remove xs node_name)
         |Dir _d -> x::(remove xs node_name)
       end
+let split_sh (s : string) : string list =
+  let str_l = String.split_on_char '/' s in
+  List.filter (fun t -> t <> "") str_l
+
+let rec search lst nm = match lst with
+  |[] -> None 
+  |x::xs -> begin 
+    match x with 
+      |Dir d -> if d.name=nm then Some d else search xs nm
+      |File _fl-> None
+    end
