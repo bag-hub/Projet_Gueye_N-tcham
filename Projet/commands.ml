@@ -62,9 +62,6 @@ let touch file_name fs = match Filesystem.isName file_name with
                         end
     |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére \"/\"";
             fs
-    (*if estPresent (File {name=namef;content=""}) fs.root.children then fs
-    else let new_dir = {name=fs.root.name; children=(File {name=namef;content=""})::fs.root.children}
-                        in {root=new_dir; current_path=fs.current_path}*)
 
 
 (*ls directory_name*)

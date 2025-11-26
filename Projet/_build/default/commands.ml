@@ -1,6 +1,7 @@
 
 (*Module de base défini par filesystem.ml est Filesystem*)
 
+
 open Filesystem 
 
 (*fonction récursive pour  qui vérifie si un élts précis est présent dans notre liste*)
@@ -127,4 +128,4 @@ let cd nom_chemin root =
             |None -> print_endline "cd : ce chemin est invalide"; false,acc
             |Some y -> aux xs (acc@[y.name])
             end
-    in aux nom_chemin root.current_path
+    in aux nom_chemin []

@@ -48,10 +48,10 @@ let path_to_string path =
 let concat a b = match a,b with
                   |Name a,Name b -> Name (a^b)
 
-(*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou makdir contient un "/"*)
+(*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou mkdir contient un "/"*)
 (*??????*)
 let isName str = 
-  let liste = String.split_on_char ' ' str 
+  let liste = String.split_on_char ' ' str (*je voulais créer une liste de chaine de caractère du string str*)
     in let rec aux l acc = match l,acc with
         |[],(Some Name acc) ->Some (Name acc)
         |x::xs,Some (Name acc) -> (match x with 
