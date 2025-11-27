@@ -10,12 +10,16 @@ and node = File of file | Dir of directory
 
 type filesystem = { root: directory; current_path: path }
 
+val init : unit -> filesystem
 
 val path_to_string : path -> string
 
-val init : unit -> filesystem
+(*Cette fonction prends en paramétre le nom d'un dossier ou un fichier et une liste de node(dossier ou fichier) et retourne ce node s'il existe dans la liste et Node sinon*)
+val estPresentBis : name -> node list -> node option
 
-(*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou makdir contient un "/"*)
+
+(*fonction qui permet de vérifer si le nom d'un node contient un "/" dans l'utilisation de touch ou mkdir
+elle prends en paramétre un string, et retourne None si ce string contient un caractére '/' et le Name de ce string sinon*)
 val isName : string -> name option
 
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)

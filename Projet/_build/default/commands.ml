@@ -13,25 +13,12 @@ let rec estPresent node liste= match liste with
                     |(Dir nd,Dir d)->d.name=nd.name || estPresent node xs
                     |_->false)
 
-(*Cette fonction prends en paramétre le nom d'un dossier ou un fichier et une liste de node(dossier ou fichier) et retourne ce node s'il existe dans la liste et Node sinon*)
-let rec estPresentBis node liste = match liste with
-                            |[]-> None
-                            |x::xs-> begin
-                                match x,node with 
-                                    |File fl,Name nf-> if fl.name=Name nf then Some (File fl) else estPresentBis node xs
-                                    |Dir d,Name nf-> if d.name=Name nf then Some (Dir d) else estPresentBis node xs
-                                    end
 
 (*Cette fonction permet de convertir un name en un string*)
 let nameToString name = match name with |Name name->name
 (*pwd*)
 let pwd fs = print_endline (path_to_string fs.current_path)
 
-(*mkdir*)
-(*let mkdir nameD fs = if  estPresent (Dir {name=nameD;children=[]}) fs.root.children then fs
-                    else let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
-                        in {root=new_dir; current_path=fs.current_path}*)
-                        
 (*mkdir permet de vérifier si un fichier  est dans un des repertoire de filesystem, Si c'est le cas, elle renvoi la confirmation ... Sinon elle creer ce element dans le directory de filesystem*)
 let mkdir nameD fs = 
     let nd = estPresentBis nameD fs.root.children
@@ -62,9 +49,6 @@ let touch file_name fs = match Filesystem.isName file_name with
                         end
     |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére \"/\"";
             fs
-    (*if estPresent (File {name=namef;content=""}) fs.root.children then fs
-    else let new_dir = {name=fs.root.name; children=(File {name=namef;content=""})::fs.root.children}
-                        in {root=new_dir; current_path=fs.current_path}*)
 
 
 (*ls directory_name*)
@@ -120,12 +104,12 @@ relatif nomchemin pour modifier le chemin courant. Elle affiche une erreur si ce
 relatif ne mène à aucun répertoire existant*)
 (*Cette fonction prends en paramétre le chemin où on veux se déplacer, elle retourne un couple true et *)
 (*ok/error constructor*)
-let cd nom_chemin root = 
+let cd nom_chemin fs = 
     let rec aux lst acc = 
         match lst with 
-        |[] -> true,acc
-        |x::xs-> begin match Filesystem.search root.children (Name x) with
-            |None -> print_endline "cd : ce chemin est invalide"; false,acc
+        |[] -> true,{root=fs.root;current_path=acc}
+        |x::xs-> begin match Filesystem.search fs.root.children (Name x) with
+            |None -> print_endline "cd : ce chemin est invalide"; false,fs
             |Some y -> aux xs (acc@[y.name])
             end
-    in aux nom_chemin []
+    in aux nom_chemin fs.current_path

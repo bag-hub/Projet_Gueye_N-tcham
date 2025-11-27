@@ -24,23 +24,22 @@ let rec loop (fs : Filesystem.filesystem) : unit =
 
         |"mkdir"::tokens'-> (match tokens' with 
                               |x::[]-> (match (Filesystem.isName x) with 
-                                    |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs' (* pour éviter cette erreur modifier la fonction isName afin qu'elle retourne le string sous forme de Name 
-                              si tout est bon et None sinon avec la signature string->Name option *)
-                                    |None-> print_endline "le nom d'un fichier";loop fs)
+                                    |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs'
+                                    |None-> print_endline "mkdir:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
                               |_-> print_endline "mkdir ne prends qu'un seul argument";
                                     loop fs)
 
         | "touch"::tockens' -> begin
             match tockens' with
               |x::[] -> let fs' = touch x fs in loop fs'
-              |_-> print_endline "touch: ce commande ne prends qu'un seul argumen";
+              |_-> print_endline "touch: ce commande ne prends qu'un seul argument";
                   loop fs
           end
 
         | "ls"::tockens'->(match tockens' with 
                               |[]->ls fs; 
                                 loop fs
-                              |_->print_endline "ls ne prends aucun n'arguments";
+                              |_->print_endline "ls: cette commande ne prends aucun argument";
                                 loop fs)
 
         | "cat"::tockens' -> begin
@@ -53,7 +52,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             
         | "write"::tockens' -> begin
           match tockens' with 
-              |x::[] -> let nd = estPresentBis (Name x) fs.root.children in begin 
+              |x::[] -> let nd = Filesystem.estPresentBis (Name x) fs.root.children in begin 
                 match nd with
                   |None -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; loop fs
                   |Some nd' -> begin 
@@ -64,9 +63,9 @@ let rec loop (fs : Filesystem.filesystem) : unit =
               |[] -> print_endline "write : cette commande prends en argument le nom d'un fichier existant dans ce répertoire et permet de saisir du te'xte dans ce fichier";
               |_::_ -> print_endline "write : Cette command ne prend qu'un seul argument"; loop fs end
         (* Insérer les commandes ici *)
-        |"cd"::tockens' -> let res = cd tockens' fs.root in begin
+        |"cd"::tockens' -> let res = cd tockens' fs in begin
                   match fst res with
-                    |true -> loop {root=fs.root;current_path=snd res}
+                    |true -> loop (snd res)
                     |false -> loop fs
             end
 

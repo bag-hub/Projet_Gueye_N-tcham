@@ -45,20 +45,30 @@ let init () =
 let path_to_string path =
   let names = List.map (fun (Name s) -> s) path in
   "/"^ (String.concat "/" names)
-let concat a b = match a,b with
-                  |Name a,Name b -> Name (a^b)
 
-(*fonction qui permet de vérifer si le nom d'un node dans l'utilisation de touch ou makdir contient un "/"*)
+(*Cette fonction prends en paramétre le nom d'un dossier ou un fichier et une liste de node(dossier ou fichier) et retourne ce node s'il existe dans la liste et Node sinon*)
+let rec estPresentBis node liste = match liste with
+                            |[]-> None
+                            |x::xs-> begin
+                                match x,node with 
+                                    |File fl,Name nf-> if fl.name=Name nf then Some (File fl) else estPresentBis node xs
+                                    |Dir d,Name nf-> if d.name=Name nf then Some (Dir d) else estPresentBis node xs
+                                    end
+
+(*!!!!!!!!!!!!!!!!pas besoin*)
+(*let concat a b = match a,b with
+                  |Name a,Name b -> Name (a^b)*)
+
+(*fonction qui permet de vérifer si le nom d'un node contient un "/" dans l'utilisation de touch ou mkdir
+elle prends en paramétre un string, et retourne None si ce string contient un caractére '/' et le Name de ce string sinon*)
 (*??????*)
 let isName str = 
-  let liste = String.split_on_char ' ' str 
-    in let rec aux l acc = match l,acc with
-        |[],(Some Name acc) ->Some (Name acc)
-        |x::xs,Some (Name acc) -> (match x with 
-                                    |Some (Name x)-> aux xs (Some (concat (Name acc) (Name x)))
-                                    |_-> None)
-        |_->None
-      in aux (List.map (fun x->(Some (Name x))) liste) (Some (Name ""))
+  let lst = List.of_seq(String.to_seq str) (*je voulais créer une liste de chaine de caractère du string str*)
+    in let rec aux l acc =
+       match l with
+        |[] -> Some (Name acc)
+        |x::xs -> if x='/' then None else aux xs ((acc^String.make 1 x))
+    in aux lst ""
 
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
 let rec remove l_node node_name = match l_node with
@@ -68,6 +78,8 @@ let rec remove l_node node_name = match l_node with
         |File fl -> if fl.name=node_name then xs else File fl::(remove xs node_name)
         |Dir _d -> x::(remove xs node_name)
       end
+
+
 let split_sh (s : string) : string list =
   let str_l = String.split_on_char '/' s in
   List.filter (fun t -> t <> "") str_l
