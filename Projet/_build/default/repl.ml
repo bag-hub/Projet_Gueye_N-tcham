@@ -3,6 +3,7 @@ let split_ws (s : string) : string list =
   List.filter (fun t -> t <> "") str_l
 
 open Commands
+open Filesystem
 
 let rec loop (fs : Filesystem.filesystem) : unit =
   (* Affiche le chemin courant en couleur  *)
@@ -63,7 +64,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
               |[] -> print_endline "write : cette commande prends en argument le nom d'un fichier existant dans ce répertoire et permet de saisir du te'xte dans ce fichier";
               |_::_ -> print_endline "write : Cette command ne prend qu'un seul argument"; loop fs end
         (* Insérer les commandes ici *)
-        |"cd"::tockens' -> let res = cd tockens' fs in begin
+        |"cd"::tockens' -> let res = cd (split_sh tockens') fs in begin
                   match fst res with
                     |true -> loop (snd res)
                     |false -> loop fs

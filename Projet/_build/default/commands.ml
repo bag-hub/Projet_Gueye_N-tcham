@@ -99,16 +99,18 @@ let write file_name str fs =
                         end
     end
 
-(*qui permet de se déplacer dans l’arborescence en suivant le chemin
+(*cd : qui permet de se déplacer dans l’arborescence en suivant le chemin
 relatif nomchemin pour modifier le chemin courant. Elle affiche une erreur si ce chemin
 relatif ne mène à aucun répertoire existant*)
-(*Cette fonction prends en paramétre le chemin où on veux se déplacer, elle retourne un couple true et *)
+(*Cette fonction prends en paramétre une liste de name qui cooresponds au chemin que l'on veut suivre pour se déplacer dans un autre répertoire et un filesystem,
+retourne un couple de boléen et un filsystem qui indique si on s'est déplacé dans le répertoire comme voulu ou non et un nouveau filesystem avec le même arborescence(root),
+mais avec un current_path probabablement différent  *)
 (*ok/error constructor*)
 let cd nom_chemin fs = 
     let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
-        |x::xs-> begin match Filesystem.search fs.root.children (Name x) with
+        |x::xs-> begin match Filesystem.search fs.root.children x with
             |None -> print_endline "cd : ce chemin est invalide"; false,fs
             |Some y -> aux xs (acc@[y.name])
             end

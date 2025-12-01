@@ -25,6 +25,6 @@ val isName : string -> name option
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
 val remove : node list -> name -> node list
 
-val split_sh : string -> string list
+val split_sh : string -> name list
 
 val search : node list -> name -> directory option

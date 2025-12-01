@@ -47,6 +47,7 @@ let path_to_string path =
   "/"^ (String.concat "/" names)
 
 (*Cette fonction prends en paramétre le nom d'un dossier ou un fichier et une liste de node(dossier ou fichier) et retourne ce node s'il existe dans la liste et Node sinon*)
+(*donné le fs en paramétre pour rechercher la présence du dossier dans le répertoire courant avec current_path*)
 let rec estPresentBis node liste = match liste with
                             |[]-> None
                             |x::xs-> begin
@@ -67,7 +68,7 @@ let isName str =
     in let rec aux l acc =
        match l with
         |[] -> Some (Name acc)
-        |x::xs -> if x='/' then None else aux xs ((acc^String.make 1 x))
+        |x::xs -> if x='/' then None else (print_endline acc; aux xs ((acc^String.make 1 x)))
     in aux lst ""
 
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
@@ -80,9 +81,9 @@ let rec remove l_node node_name = match l_node with
       end
 
 
-let split_sh (s : string) : string list =
-  let str_l = String.split_on_char '/' s in
-  List.filter (fun t -> t <> "") str_l
+(*?????*)
+let split_sh str =
+  List.map (fun x -> Name x) (String.split_on_char '/' str) (*Si on a deux caractéres '/' consecutifs on a dans la liste des chaines vides, on ne les enléve pas afin que cela nous de nous arrêter dès qu'on a une chaine vide dans la fonction puisque on est sur que le name d'un node n'est pas vide *)
 
 let rec search lst nm = match lst with
   |[] -> None 

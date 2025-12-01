@@ -3,6 +3,7 @@ let split_ws (s : string) : string list =
   List.filter (fun t -> t <> "") str_l
 
 open Commands
+open Filesystem
 
 let rec loop (fs : Filesystem.filesystem) : unit =
   (* Affiche le chemin courant en couleur  *)
@@ -63,12 +64,16 @@ let rec loop (fs : Filesystem.filesystem) : unit =
               |[] -> print_endline "write : cette commande prends en argument le nom d'un fichier existant dans ce répertoire et permet de saisir du te'xte dans ce fichier";
               |_::_ -> print_endline "write : Cette command ne prend qu'un seul argument"; loop fs end
         (* Insérer les commandes ici *)
-        |"cd"::tockens' -> let res = cd tockens' fs in begin
+        |"cd"::tockens' -> begin
+          match tockens' with
+              |y::[] -> let res = cd (split_sh y) fs in begin(*split_sh nous permet de décomposer le chemin donner en argument en une liste de name qui correspond au chemin à suivre dans l'arbre*)
                   match fst res with
                     |true -> loop (snd res)
                     |false -> loop fs
+                  end
+              |_->print_endline "cd: Cette commande prends en arguments un seul arguments qui est un chemin vers le répertoire dans lequel vous souhaitez vous rendre ";
+                  loop fs
             end
-
         | command :: _ ->
             Printf.eprintf "Command not found: %s\n%!" command;
             loop fs

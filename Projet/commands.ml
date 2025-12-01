@@ -99,17 +99,40 @@ let write file_name str fs =
                         end
     end
 
-(*qui permet de se déplacer dans l’arborescence en suivant le chemin
+(*cd : qui permet de se déplacer dans l’arborescence en suivant le chemin
 relatif nomchemin pour modifier le chemin courant. Elle affiche une erreur si ce chemin
 relatif ne mène à aucun répertoire existant*)
-(*Cette fonction prends en paramétre le chemin où on veux se déplacer, elle retourne un couple true et *)
+(*Cette fonction prends en paramétre une liste de name qui cooresponds au chemin que l'on veut suivre pour se déplacer dans un autre répertoire et un filesystem,
+retourne un couple de boléen et un filsystem qui indique si on s'est déplacé dans le répertoire comme voulu ou non et un nouveau filesystem avec le même arborescence(root),
+mais avec un current_path probabablement différent  *)
 (*ok/error constructor*)
 let cd nom_chemin fs = 
     let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
-        |x::xs-> begin match Filesystem.search fs.root.children (Name x) with
+        |x::xs-> begin match Filesystem.search fs.root.children x with
             |None -> print_endline "cd : ce chemin est invalide"; false,fs
             |Some y -> aux xs (acc@[y.name])
             end
     in aux nom_chemin fs.current_path
+
+(*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
+la sous-arborescence partant du répertoire courant. Le chemin absolu de chacun de ces
+fichiers est affiché.*)
+let find file_name fs = ()
+
+(*rm nomdelelement qui permet de supprimer un fichier ou un répertoire nomdelelement
+du répertoire courant. Elle affiche une erreur si aucun élément ne porte le nom nomdelelement
+dans le répertoire courant.*)
+let rm node_name = ()
+
+(*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
+toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
+si aucun élément ne porte nom nomdelelement dans le répertoire courant, ou si un
+élément porte déjà ce nom dans le répertoire accesible via nomduchemin.*)
+let mv node_name path_p = ()
+
+(*cp nomdelelement nomduchemin qui permet de copier (en le dupliquant) un fi-
+chier ou un répertoire nomdelelement dans le chemin relatif nomduchemin. Elle
+affiche une erreur dans les mêmes cas que la commande mv.*)
+let mv file_name path_p = ()

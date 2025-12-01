@@ -68,7 +68,7 @@ let isName str =
     in let rec aux l acc =
        match l with
         |[] -> Some (Name acc)
-        |x::xs -> if x='/' then None else aux xs ((acc^String.make 1 x))
+        |x::xs -> if x='/' then None else (print_endline acc; aux xs ((acc^String.make 1 x)))
     in aux lst ""
 
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
@@ -81,6 +81,7 @@ let rec remove l_node node_name = match l_node with
       end
 
 
+(*?????*)
 let split_sh str =
   List.map (fun x -> Name x) (String.split_on_char '/' str) (*Si on a deux caractéres '/' consecutifs on a dans la liste des chaines vides, on ne les enléve pas afin que cela nous de nous arrêter dès qu'on a une chaine vide dans la fonction puisque on est sur que le name d'un node n'est pas vide *)
 
