@@ -52,17 +52,19 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             end
             
         | "write"::tockens' -> begin
-          match tockens' with 
-              |x::[] -> let nd = Filesystem.estPresentBis (Name x) fs.root.children in begin 
+          match tockens' with
+              |[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\"";
+              |_::[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; loop fs
+              |x::xs -> let nd = estPresentBis (Name x) fs.root.children in begin (*on ne vérifie pas si x est contient un "/", parce qu'on est sûr que si le fichier de ce nom existe ça été déjà vérifier à la création avec touch*)
                 match nd with
                   |None -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; loop fs
                   |Some nd' -> begin 
-                    match nd' with |File fl -> let str = read_line () in let fs' = write fl.name str fs in loop fs'
-                          |Dir _d -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; loop fs
+                    match nd' with 
+                      |File fl -> let str = concat " " xs in let fs' = write fl str fs in loop fs'
+                      |Dir _d -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; loop fs
                     end
                   end
-              |[] -> print_endline "write : cette commande prends en argument le nom d'un fichier existant dans ce répertoire et permet de saisir du te'xte dans ce fichier";
-              |_::_ -> print_endline "write : Cette command ne prend qu'un seul argument"; loop fs end
+                end
         (* Insérer les commandes ici *)
         |"cd"::tockens' -> begin
           match tockens' with

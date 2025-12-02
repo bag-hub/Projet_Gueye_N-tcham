@@ -83,21 +83,14 @@ let cat file_name fs = let file_name' = Filesystem.isName file_name
                     end
         |None -> print_endline "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
 
-(*write file_name*)
-let write file_name str fs = 
-    let node = estPresentBis file_name fs.root.children in
-    begin
-        match node with 
-            |None -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; fs
-            |Some nd -> begin 
-                 match nd with
-                    |Dir _d -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; fs
-                    |File fl -> let new_file = {name=fl.name;content=fl.content^str}
-                                in (let new_root = {name=fs.root.name;children=let new_children = Filesystem.remove fs.root.children fl.name 
-                                                                                in File new_file::new_children} 
+(*write file_name texte_a_ajouter
+dans le texte à ajouter on doit pas mettre un caractére '"' tout seul ou au début d'un mot ou à la fin d'un sans le déspécialiser avec '\', on autoriser le fait demettre '"' au milieu d'un mot*)
+let write (fl:file) str fs = 
+    let new_file = {name=fl.name; content=fl.content^str}
+        in (let new_root = {name=fs.root.name;children=
+                                                let new_children = remove (fs.root.children) fl.name in (File new_file)::new_children} 
                                     in {root=new_root;current_path=fs.current_path})
-                        end
-    end
+
 
 (*cd : qui permet de se déplacer dans l’arborescence en suivant le chemin
 relatif nomchemin pour modifier le chemin courant. Elle affiche une erreur si ce chemin
@@ -116,7 +109,7 @@ let cd nom_chemin fs =
             end
     in aux nom_chemin fs.current_path
 
-(*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
+(*(*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
 la sous-arborescence partant du répertoire courant. Le chemin absolu de chacun de ces
 fichiers est affiché.*)
 let find file_name fs = ()
@@ -135,4 +128,4 @@ let mv node_name path_p = ()
 (*cp nomdelelement nomduchemin qui permet de copier (en le dupliquant) un fi-
 chier ou un répertoire nomdelelement dans le chemin relatif nomduchemin. Elle
 affiche une erreur dans les mêmes cas que la commande mv.*)
-let mv file_name path_p = ()
+let mv file_name path_p = ()*)

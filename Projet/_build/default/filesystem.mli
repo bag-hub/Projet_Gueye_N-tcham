@@ -28,3 +28,9 @@ val remove : node list -> name -> node list
 val split_sh : string -> name list
 
 val search : node list -> name -> directory option
+
+(*On a choisi de définir une fonction concat pour vérifier si on veux mettre des '"' dans le texte de la commande write est ce qu'on les a bien déspécilisé ce caractère*)
+val concat : string -> string list -> string
+
+(*concaten une list de string en vérifiant qu'il y a pas*)
+(*val isTexte : string list -> string*)
