@@ -1,10 +1,8 @@
 
 (*Module de base défini par filesystem.ml est Filesystem*)
-
-
 open Filesystem 
 
-(*fonction récursive pour  qui vérifie si un élts précis est présent dans notre liste*)
+(*fonction récursive pour  qui vérifie si un élts précis est présent dans notre liste*)(*A supprimer???*)
 let rec estPresent node liste= match liste with 
        |[] -> false 
        | x::xs -> (match (node,x) with 
@@ -21,17 +19,21 @@ let pwd fs = print_endline (path_to_string fs.current_path)
 
 (*mkdir permet de vérifier si un fichier  est dans un des repertoire de filesystem, Si c'est le cas, elle renvoi la confirmation ... Sinon elle creer ce element dans le directory de filesystem*)
 let mkdir nameD fs = 
-    let nd = estPresentBis nameD fs.root.children
-    in match nd with 
-        |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
-                    in {root=new_dir; current_path=fs.current_path}
-        |Some ndO-> begin 
-            match ndO with 
-                |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe";
-                            fs
-                |Dir _d -> print_endline "mkdir: impossible de créer un répertoire de ce nom car un dossier de ce nom existe déjà"; 
-                            fs
-                    end
+    match (cd_current_dir fs) with 
+    |Some d -> let nd = estPresentBis nameD d.children
+            in begin
+                match nd with 
+                |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
+                            in {root=new_dir; current_path=fs.current_path}
+                |Some ndO-> begin 
+                    match ndO with 
+                        |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe";
+                                    fs
+                        |Dir _d -> print_endline "mkdir: impossible de créer un répertoire de ce nom car un dossier de ce nom existe déjà"; 
+                                    fs
+                            end
+                end
+    |None -> print_string "yes";fs (*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
 
 (*touch*)
 let touch file_name fs = match Filesystem.isName file_name with
@@ -47,7 +49,7 @@ let touch file_name fs = match Filesystem.isName file_name with
                                         end
                             |None-> let nouveau_root = {name=fs.root.name;children=(File {name=file_name';content=""})::fs.root.children} in {root=nouveau_root;current_path=fs.current_path}
                         end
-    |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére \"/\"";
+    |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére '/'";
             fs
 
 
@@ -98,15 +100,23 @@ relatif ne mène à aucun répertoire existant*)
 (*Cette fonction prends en paramétre une liste de name qui cooresponds au chemin que l'on veut suivre pour se déplacer dans un autre répertoire et un filesystem,
 retourne un couple de boléen et un filsystem qui indique si on s'est déplacé dans le répertoire comme voulu ou non et un nouveau filesystem avec le même arborescence(root),
 mais avec un current_path probabablement différent  *)
-(*ok/error constructor*)
 let cd nom_chemin fs = 
     let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
-        |x::xs-> begin match Filesystem.search fs.root.children x with
-            |None -> print_endline "cd : ce chemin est invalide"; false,fs
-            |Some y -> aux xs (acc@[y.name])
-            end
+        |x::xs->
+            if (x= "..") then 
+                let acc' = begin
+                match acc with
+                    |[] -> print_endline "Vous êtes déjà à la racine cd .. ne marche plus" ; []
+                    |_ -> removeLast acc 
+                    end
+                in aux xs acc'
+            else(begin 
+                match Filesystem.search fs.root.children (Name x) with(*peut être enlever search et mettre isPresent*)
+                    |None -> print_endline "cd : ce chemin est invalide"; false,fs
+                    |Some y -> aux xs (acc@[y.name])
+                end)
     in aux nom_chemin fs.current_path
 
 (*(*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
@@ -129,3 +139,6 @@ let mv node_name path_p = ()
 chier ou un répertoire nomdelelement dans le chemin relatif nomduchemin. Elle
 affiche une erreur dans les mêmes cas que la commande mv.*)
 let mv file_name path_p = ()*)
+
+
+

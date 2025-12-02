@@ -57,7 +57,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
               |_::[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; loop fs
               |x::xs -> let nd = estPresentBis (Name x) fs.root.children in begin (*on ne vérifie pas si x est contient un "/", parce qu'on est sûr que si le fichier de ce nom existe ça été déjà vérifier à la création avec touch*)
                 match nd with
-                  |None -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire"; loop fs
+                  |None -> print_endline "Aucun fichier ne porte ce nom dans ce répertoire \n syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; loop fs
                   |Some nd' -> begin 
                     match nd' with 
                       |File fl -> let str = concat " " xs in let fs' = write fl str fs in loop fs'
