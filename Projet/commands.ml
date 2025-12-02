@@ -11,6 +11,16 @@ let rec estPresent node liste= match liste with
                     |(Dir nd,Dir d)->d.name=nd.name || estPresent node xs
                     |_->false)
 
+let rec comparer node liste= match liste with
+        |[]-> print_string " repertoire est vide"
+        | x::xs -> match x with 
+                 |Dir _ -> print_string "Rien faire"
+                 |File f -> if f.name = node then print_string "Trouver" else comparer node xs
+
+                   
+                 
+
+
 
 (*Cette fonction permet de convertir un name en un string*)
 let nameToString name = match name with |Name name->name
