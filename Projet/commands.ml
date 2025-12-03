@@ -155,10 +155,12 @@ let find nomFichier fs =
 
 
 (*Essai de RM*)
-let rm node_name fs = 
-   let rec auxRm liste =match liste with
-   |[]-> None
-   |x::xs -> if estPresentBis x node_name then
+(*reflexion pas terminer*)
+let rm node_name fs =  match cd_current_dir fs with
+   |None -> print_string "Erreur.."
+   |Some dir -> let rec auxRm liste =match liste with
+             |[]-> []
+             |x::xs -> if estPresentBis node_name x then
                auxRm xs else 
                    x::auxRm xs in 
                    let rep_courant = cd_current_dir fs in auxRm rep_courant 
