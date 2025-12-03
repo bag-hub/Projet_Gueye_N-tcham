@@ -111,7 +111,7 @@ let cd nom_chemin fs =
 toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
 si aucun élément ne porte nom nomdelelement dans le répertoire courant, ou si un
 élément porte déjà ce nom dans le répertoire accesible via nomduchemin.*)
-let mv node_name path_p fs = let d = cd_current_dir fs fs.current_path in 
+let mv node_name _ fs = let d = cd_current_dir fs fs.current_path in 
     (*On vérifie s'il y a un node de name node_name après s'être déplacer sur dossier courant dèja*)
     match d with 
     |Some d' -> let node = estPresentBis node_name d'.children
@@ -119,11 +119,11 @@ let mv node_name path_p fs = let d = cd_current_dir fs fs.current_path in
             |Some _node' -> fs
             |None -> fs )
     |None -> fs (* on peut pas avoir ce cas là avec le current_path, s'il est bien fait et mise à jour*)
-(*
+
 (*rm nomdelelement qui permet de supprimer un fichier ou un répertoire nomdelelement
 du répertoire courant. Elle affiche une erreur si aucun élément ne porte le nom nomdelelement
 dans le répertoire courant.*)
-let rm node_name = ()
+(*let rm node_name = ()
 
 (*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
 toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
@@ -139,33 +139,31 @@ let mv file_name path_p = ()*)
 (*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
 la sous-arborescence partant du répertoire courant. Le chemin absolu de chacun de ces
 fichiers est affiché.*)
-(*let find file_name fs = ()
+(*let find file_name fs = ()*)
 
 (*Essai pr le find *)
 (*Pas encore tester*)
 let find nomFichier fs =
-   let rec auxFind liste = begin
+   let rec auxFind liste chemin =
      match liste with 
          |[] -> None
-         | x::xs -> comparer nomFichier liste; 
+         | x::xs -> Filesystem.comparer nomFichier liste; 
             begin
-             match estPresentBis nomFichier liste with
-               |None -> auxFind xs
-               |Some node -> begin
-                    match node with
-                  
-                    |File f -> if f.name = nomFichier then Some [f.name]
-                        else auxFind xs
-                    |Dir d -> if nomFichier = d.name then
-                         Some [d.name]
-                       else let a = auxFind d.children in 
-                                (*Nom du dossier devant le chemin *)
-                            if a= None then auxFind xs else
-                            let chemin = Option.get a in Some (d.name :: chemin) 
-                  end
-            end
-         end
-    in auxFind fs.root.children; *)
+             match x with
+              |File f -> if f.name = nomFichier then ( 
+                print_endline(path_to_string (chemin @[f.name]));
+                 Some(chemin @ [f.name]))
+                        else auxFind xs chemin
+              |Dir d -> if d.name = nomFichier  then (
+                print_endline(path_to_string (chemin @[d.name]));
+                 (*Some(chemin @ [d.name])) *) auxFind xs chemin)
+                else  
+                    match auxFind d.children (chemin @ [d.name]) with
+                    |None -> auxFind xs chemin
+                    |Some chemin -> Some chemin
+            in 
+            ignore (auxFind fs.root.children fs.current_path)
+
    
 
 

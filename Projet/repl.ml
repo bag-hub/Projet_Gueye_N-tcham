@@ -80,3 +80,5 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             Printf.eprintf "Command not found: %s\n%!" command;
             loop fs
       end
+      (*Commande rm action*)
+  

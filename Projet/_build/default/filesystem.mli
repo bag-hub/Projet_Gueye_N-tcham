@@ -42,6 +42,9 @@ val cd_current_dir : filesystem -> path -> directory option
 val removeLast : path -> path
 
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
+val comparer: name -> node list -> unit
+
+(*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 val removeBis: node list -> name -> node list
 
 
