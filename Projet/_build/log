@@ -1,9 +1,10 @@
-# dune build
+# dune exec ./main.exe
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
-# Shared cache location: /comptes/E25C898B/.cache/dune/db
-# Workspace root: /comptes/E25C898B/Projet_Gueye_N-tcham/Projet
-# Auto-detected concurrency: 6
+# Shared cache location: /home/bag-unbuntu/.cache/dune/db
+# Workspace root:
+# /home/bag-unbuntu/Documents/L3_infoM/pf/Projet_Gueye_N-tcham/Projet
+# Auto-detected concurrency: 12
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -13,16 +14,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /opt/opam-shared/default/bin/ocamlc.opt -config > /tmp/dune_15b9c7_output
-$ (cd _build/default && /opt/opam-shared/default/bin/ocamldep.opt -modules -intf filesystem.mli) > _build/default/.main.eobjs/dune__exe__Filesystem.intf.d
-$ (cd _build/default && /opt/opam-shared/default/bin/ocamldep.opt -modules -impl repl.ml) > _build/default/.main.eobjs/dune__exe__Repl.impl.d
-$ (cd _build/default && /opt/opam-shared/default/bin/ocamldep.opt -modules -impl commands.ml) > _build/default/.main.eobjs/dune__exe__Commands.impl.d
-> File "commands.ml", line 164, characters 12-14:
-> 164 |             in 
->                   ^^
-> Error: Syntax error: "end" expected
-> File "commands.ml", line 151, characters 12-17:
-> 151 |             begin
->                   ^^^^^
->   This "begin" might be unmatched
-[2]
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_84bb5f_output

@@ -147,8 +147,7 @@ let find nomFichier fs =
    let rec auxFind liste chemin =
      match liste with 
          |[] -> None
-         | x::xs -> Filesystem.comparer nomFichier liste; 
-            begin
+         | x::xs -> let () = Filesystem.comparer nomFichier liste in
              match x with
               |File f -> if f.name = nomFichier then ( 
                 print_endline(path_to_string (chemin @[f.name]));
@@ -179,6 +178,10 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
             let dir_nouveau = {dir with children = new_children}
             (*{fs with root = replace_dir fs.root fs.current_path dir_nouveau} *)
                       in {fs with root = dir_nouveau}
+
+
+                      (* J'ai reflechis a une fonction replace pour retourner le repertoire apres avoir fait le removBis...
+                      *)
   
       
       
