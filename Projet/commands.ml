@@ -165,17 +165,22 @@ let find nomFichier fs =
                   end
             end
          end
-    in auxFind fs.root.children; 
+    in auxFind fs.root.children; *)
    
 
 
 (*Essai de RM*)
 (*reflexion pas terminer*)
-let rm node_name fs =  match cd_current_dir fs with
-   |None -> print_string "Erreur.."
-   |Some dir -> let rec auxRm liste =match liste with
-             |[]-> []
-             |x::xs -> if estPresentBis node_name x then
-               auxRm xs else 
-                   x::auxRm xs in 
-                   let rep_courant = cd_current_dir fs in auxRm rep_courant *)
+let rm node_name fs = match cd_current_dir fs fs.current_path with 
+    |None ->print_endline"Erreur"; fs
+    |Some dir -> 
+        match estPresentBis node_name dir.children with
+           |None -> print_endline "Elt pas present"; fs
+           |Some _ -> 
+            let new_children = removeBis dir.children node_name in
+            let dir_nouveau = {dir with children = new_children}
+            (*{fs with root = replace_dir fs.root fs.current_path dir_nouveau} *)
+                      in {fs with root = dir_nouveau}
+  
+      
+      

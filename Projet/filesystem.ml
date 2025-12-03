@@ -164,7 +164,7 @@ in List.rev( aux p [] )
 (*----1----*)
 (*qui sera utiliser dans le find*)
 (*1 / Comparer le nom de fichier auquels je veux appliquer find au fichier deja dans mon repertoire...*)
-(*let rec comparer node liste= match liste with
+let rec comparer node liste= match liste with
         |[]-> print_string " repertoire est vide"
         | x::xs -> match x with 
                  |Dir _ -> print_string "Rien faire"
@@ -189,4 +189,4 @@ let rec removeBis l_node node_name = match l_node with
                 in 
                 let dir_nouveau = Dir {d with children = children_nouveau} 
                 in dir_nouveau :: removeBis xs node_name
-      end*)
+      end
