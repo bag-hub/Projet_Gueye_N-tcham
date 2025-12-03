@@ -100,12 +100,25 @@ let cd nom_chemin fs =
     let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
-        |x::xs-> begin match Filesystem.search fs.root.children x with
+        |x::xs-> begin match Filesystem.search fs.root.children (Name x) with
             |None -> print_endline "cd : ce chemin est invalide"; false,fs
             |Some y -> aux xs (acc@[y.name])
             end
     in aux nom_chemin fs.current_path
 
+
+(*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
+toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
+si aucun élément ne porte nom nomdelelement dans le répertoire courant, ou si un
+élément porte déjà ce nom dans le répertoire accesible via nomduchemin.*)
+let mv node_name path_p fs = let d = cd_current_dir fs fs.current_path in 
+    (*On vérifie s'il y a un node de name node_name après s'être déplacer sur dossier courant dèja*)
+    match d with 
+    |Some d' -> let node = estPresentBis node_name d'.children
+        in (match node with
+            |Some _node' -> fs
+            |None -> fs )
+    |None -> fs (* on peut pas avoir ce cas là avec le current_path, s'il est bien fait et mise à jour*)
 (*
 (*rm nomdelelement qui permet de supprimer un fichier ou un répertoire nomdelelement
 du répertoire courant. Elle affiche une erreur si aucun élément ne porte le nom nomdelelement
@@ -126,7 +139,7 @@ let mv file_name path_p = ()*)
 (*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
 la sous-arborescence partant du répertoire courant. Le chemin absolu de chacun de ces
 fichiers est affiché.*)
-let find file_name fs = ()
+(*let find file_name fs = ()
 
 (*Essai pr le find *)
 (*Pas encore tester*)
@@ -138,8 +151,9 @@ let find nomFichier fs =
             begin
              match estPresentBis nomFichier liste with
                |None -> auxFind xs
-               |Some node -> match node with
-                  begin
+               |Some node -> begin
+                    match node with
+                  
                     |File f -> if f.name = nomFichier then Some [f.name]
                         else auxFind xs
                     |Dir d -> if nomFichier = d.name then
@@ -150,8 +164,9 @@ let find nomFichier fs =
                             let chemin = Option.get a in Some (d.name :: chemin) 
                   end
             end
-    in auxFind fs root.children; 
-    end
+         end
+    in auxFind fs.root.children; 
+   
 
 
 (*Essai de RM*)
@@ -163,4 +178,4 @@ let rm node_name fs =  match cd_current_dir fs with
              |x::xs -> if estPresentBis node_name x then
                auxRm xs else 
                    x::auxRm xs in 
-                   let rep_courant = cd_current_dir fs in auxRm rep_courant 
+                   let rep_courant = cd_current_dir fs in auxRm rep_courant *)

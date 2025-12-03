@@ -137,7 +137,7 @@ let concat sep l_str =
 
 (*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un parcours de l'arbre vers un noeud interne correspond
 On l'utilise dans repl pour le cas de mkdir, touch,...*)
-let cd_current_dir fs = 
+let cd_current_dir fs path_p = 
   let rec aux l dir = 
     match l with
       |[] -> Some dir
@@ -148,7 +148,7 @@ let cd_current_dir fs =
             |Dir d -> aux xs d 
             |File _f -> None )
       )
-  in aux fs.current_path fs.root 
+  in aux path_p fs.root 
 
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 let removeLast p:path = 
@@ -158,10 +158,13 @@ let removeLast p:path =
     |x::xs -> aux xs (x::acc)
 in List.rev( aux p [] )
 
+(*Ajoute le node dans le fs au dossier correspodant à path_p*)
+(*let add_node fs path_p = 
+  let aux*)
 (*----1----*)
 (*qui sera utiliser dans le find*)
 (*1 / Comparer le nom de fichier auquels je veux appliquer find au fichier deja dans mon repertoire...*)
-let rec comparer node liste= match liste with
+(*let rec comparer node liste= match liste with
         |[]-> print_string " repertoire est vide"
         | x::xs -> match x with 
                  |Dir _ -> print_string "Rien faire"
@@ -186,4 +189,4 @@ let rec removeBis l_node node_name = match l_node with
                 in 
                 let dir_nouveau = Dir {d with children = children_nouveau} 
                 in dir_nouveau :: removeBis xs node_name
-      end
+      end*)

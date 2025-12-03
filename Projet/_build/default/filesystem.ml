@@ -137,7 +137,7 @@ let concat sep l_str =
 
 (*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un parcours de l'arbre vers un noeud interne correspond
 On l'utilise dans repl pour le cas de mkdir, touch,...*)
-let cd_current_dir fs = 
+let cd_current_dir fs path_p = 
   let rec aux l dir = 
     match l with
       |[] -> Some dir
@@ -148,7 +148,7 @@ let cd_current_dir fs =
             |Dir d -> aux xs d 
             |File _f -> None )
       )
-  in aux fs.current_path fs.root 
+  in aux path_p fs.root 
 
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 let removeLast p:path = 
@@ -157,3 +157,33 @@ let removeLast p:path =
     |_::[] -> acc (* on enlève le dernier élément de liste*)
     |x::xs -> aux xs (x::acc)
 in List.rev( aux p [] )
+
+(*----1----*)
+(*qui sera utiliser dans le find*)
+(*1 / Comparer le nom de fichier auquels je veux appliquer find au fichier deja dans mon repertoire...*)
+(*let rec comparer node liste= match liste with
+        |[]-> print_string " repertoire est vide"
+        | x::xs -> match x with 
+                 |Dir _ -> print_string "Rien faire"
+                 |File f -> if f.name = node then print_string "Trouver" else comparer node xs
+
+(*Pour le rm*)
+(*RemoveBis va nous permettre de supprimer un fichier si on le trouve dans le 
+repertoire courrant et de retourner un repertoire modifier ... Dans le cas ou c'est dans un sous dossier, on aura la meme action...
+Si l'elet qu'on veux supprimer est un dossier, tout le dossier sera supprimer d'un coup*)
+let rec removeBis l_node node_name = match l_node with
+    |[] -> []
+    |x::xs -> begin
+      match x with
+        |File fl -> if fl.name=node_name then 
+            removeBis xs node_name
+            else 
+              File fl::removeBis xs node_name
+        |Dir d ->if d.name = node_name then
+              removeBis xs node_name
+              else 
+                let children_nouveau = removeBis d.children node_name
+                in 
+                let dir_nouveau = Dir {d with children = children_nouveau} 
+                in dir_nouveau :: removeBis xs node_name
+      end*)

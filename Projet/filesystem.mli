@@ -36,7 +36,13 @@ val concat : string -> string list -> string
 
 (*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un parcours de l'arbre vers un noeud interne correspond
 On l'utilise dans repl pour le cas de mkdir, touch,...*)
-val cd_current_dir : filesystem -> directory option
+val cd_current_dir : filesystem -> path -> directory option
 
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 val removeLast : path -> path
+
+(*Ajoute le node dans le fs au dossier correspodant à path_p*)
+val add_node : filesystem -> path -> node -> filesystem
+
+(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
+val add_dir : directory -> path -> node -> directory
