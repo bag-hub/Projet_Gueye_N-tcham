@@ -48,8 +48,8 @@ val comparer: name -> node list -> unit
 val removeBis: node list -> name -> node list
 
 
-(*Ajoute le node dans le fs au dossier correspodant à path_p*)
-(*val add_node : filesystem -> path -> node -> filesystem
+(*(*Ajoute le node dans le fs au dossier correspodant à path_p*)
+val add_node : filesystem -> path -> node -> filesystem*)
 
-(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
+(*(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
 val add_dir : directory -> path -> node -> directory*)
