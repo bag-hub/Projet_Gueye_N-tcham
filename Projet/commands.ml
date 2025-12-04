@@ -171,7 +171,7 @@ let find nomFichier fs =
                         else auxFind xs chemin
               |Dir d -> if d.name = nomFichier  then (
                 print_endline(path_to_string (chemin @[d.name]));
-                 (*Some(chemin @ [d.name])) *) auxFind xs chemin)
+                auxFind xs chemin)
                 else  
                     match auxFind d.children (chemin @ [d.name]) with
                     |None -> auxFind xs chemin
@@ -191,13 +191,15 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
            |None -> print_endline "Elt pas present"; fs
            |Some _ -> 
             let new_children = removeBis dir.children node_name in
-            let dir_nouveau = {dir with children = new_children}
-            (*{fs with root = replace_dir fs.root fs.current_path dir_nouveau} *)
-                      in {fs with root = dir_nouveau}
+            let dir_nouveau = {dir with children = new_children}  in  
+            let new_root = Filesystem.replace_dir fs.root fs.current_path dir_nouveau 
+                      in {fs with root = new_root}
 
 
-                      (* J'ai reflechis a une fonction replace pour retourner le repertoire apres avoir fait le removBis...
-                      *)
+
+(*Essai du cp*)
+
+
   
       
       

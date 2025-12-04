@@ -47,6 +47,10 @@ val comparer: name -> node list -> unit
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 val removeBis: node list -> name -> node list
 
+(* Cette fonction va me permettre de le mettre à la bonne place dan,s l'arborescence*)
+(*val replace_dir : directory -> name list -> directory -> directory*)
+
+
 
 (*(*Ajoute le node dans le fs au dossier correspodant à path_p*)
 val add_node : filesystem -> path -> node -> filesystem*)

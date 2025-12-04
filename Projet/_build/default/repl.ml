@@ -11,19 +11,19 @@ let rec loop (fs : Filesystem.filesystem) : unit =
   match read_line () with
   | exception End_of_file -> print_newline ()
   | line ->
-      let tokens = split_ws line in 
+      let tockens = split_ws line in 
       begin
-        match tokens with
+        match tockens with
         | "quit" :: _ | "exit" :: _ ->
             print_endline "Exit"
         | [] -> loop fs
-        |"pwd"::tokens'->(match tokens' with
+        |"pwd"::tockens'->(match tockens' with
             |[]-> pwd fs;
                   loop fs
             | _->print_endline"pwd ne prends aucun arguments";
                 loop fs)
 
-        |"mkdir"::tokens'-> (match tokens' with 
+        |"mkdir"::tockens'-> (match tockens' with 
                               |x::[]-> (match (Filesystem.isName x) with 
                                     |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs'
                                     |None-> print_endline "mkdir:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
@@ -80,5 +80,17 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             Printf.eprintf "Command not found: %s\n%!" command;
             loop fs
       end
-      (*Commande rm action*)
+      (*Commande find  action*)
+    (*"find"::tockens' -> begin
+           match tockens' with
+            | [x] -> find (Name x) fs; loop fs
+            | _ -> print_endline "find: cette commande prend exactement un argument"; loop fs
+    end*)
+
+(*| "rm"::tockens' -> begin
+    match tockens' with
+    | [x] -> let fs' = rm (Name x) fs in loop fs'
+    | _ -> print_endline "rm: cette commande prend exactement un argument"; loop fs
+  end*)
+
   

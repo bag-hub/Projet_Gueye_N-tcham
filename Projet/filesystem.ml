@@ -158,7 +158,7 @@ let concat sep l_str =
       else aux (acc^sep^x) xs (nb+1)
   in aux "" l_str 0
 
-(*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un parcours de l'arbre vers un noeud interne correspond
+(*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un auxParcourir de l'arbre vers un noeud interne correspond
 On l'utilise dans repl pour le cas de mkdir, touch,...*)
 let cd_current_dir fs path_p = 
   let rec aux l dir = 
@@ -214,6 +214,25 @@ let rec removeBis l_node node_name = match l_node with
                 in dir_nouveau :: removeBis xs node_name
       end
 
+(*Cette fonction va me permettre de remonter la modofocation ou la suppression d'un elet à toute l'arborescence que j'ai construit dans rm*)
+let rec replace_dir dir path new_dir =
+  match path with
+  | [] -> new_dir
+  | name :: rest ->
+      let rec auxParcourir enfants =
+        match enfants with
+        | [] -> []
+        | x :: xs ->
+            match x with
+            | Dir d ->
+                if d.name = name then
+                  let d_remplace = replace_dir d rest new_dir in
+                  Dir d_remplace :: auxParcourir xs
+                else
+                  x :: auxParcourir xs
+            | File _ -> x :: auxParcourir xs
+      in
+      { dir with children = auxParcourir dir.children }
 
 (*Ajoute le node dans le fs au dossier correspodant à path_p*)
 (*let add_node fs path_p node =
