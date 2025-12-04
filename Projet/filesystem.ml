@@ -234,11 +234,19 @@ let rec replace_dir dir path new_dir =
       in
       { dir with children = auxParcourir dir.children }
 
+
+      (*cette fonction copieBis permet de copier un fichier avec le meme contebu et dans le cas d'un dossier , recopie toute l'arborescence de ce node.... genre duplique le dossier avec les fichier à l'intériur*)
 let copieBis node = 
   let rec  auxCopieBis s_node = match s_node with
     |File f -> File {name = f.name; content = f.content}
-    |Dir d -> let enfant_copie = List.map auxCopieBis d.children in 
-    Dir{name =d.name; children = enfant_copie} in auxCopieBis node
+    |Dir d -> let enfant_copie = List.map auxCopieBis d.children 
+      in 
+         Dir{name =d.name; children = enfant_copie} 
+        in 
+        auxCopieBis node
+
+
+
 (*Ajoute le node dans le fs au dossier correspodant à path_p*)
 (*let add_node fs path_p node =
   let rec aux c_dir l = 
