@@ -198,8 +198,17 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
 
 
 (*Essai du cp*)
-
-
+(* Essai du cp *)
+(*let cp node_name path fs =
+  match cd_current_dir fs fs.current_path with
+  | None ->
+      print_endline "Erreur: répertoire courant invalide";
+      fs
+  | Some dir ->
+      if estPresentBis node_name dir.children = None then
+        (print_endline "élément introuvable"; fs)
+      else *)
+      
   
       
       
