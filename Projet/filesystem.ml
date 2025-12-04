@@ -213,3 +213,15 @@ let rec removeBis l_node node_name = match l_node with
                 let dir_nouveau = Dir {d with children = children_nouveau} 
                 in dir_nouveau :: removeBis xs node_name
       end
+
+
+(*Ajoute le node dans le fs au dossier correspodant à path_p*)
+(*let add_node fs path_p node =
+  let rec aux c_dir l = 
+    match path_p with
+      |[] -> let d = cd_current_dir fs path_p in begin
+        match d with
+          |Some d' -> let dr = estPresentBis (File node) (*vérifier dans le dir_courant et l'ajouer, reconcstruire l'arbre*)
+        (*let new_root = {name=fs.root.name; children = c_dir::fs.root.children }
+    in {root=new_root; current_path=[]}*)
+      |x::xs -> remove fs.current_path x.name*)
