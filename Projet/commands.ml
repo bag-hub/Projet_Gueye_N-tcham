@@ -11,8 +11,6 @@ let rec estPresent node liste= match liste with
                     |(Dir nd,Dir d)->d.name=nd.name || estPresent node xs
                     |_->false)
 
-(*Cette fonction permet de convertir un name en un string*)
-let nameToString name = match name with |Name name->name
 (*pwd*)
 let pwd fs = print_endline (path_to_string fs.current_path)
 
