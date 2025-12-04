@@ -98,42 +98,65 @@ let rec search lst nm = match lst with
 (*Fonctions ajoutés pour la commande write*)
 
 (*concaténe les éléments d'une liste de string, on l'utilise dans le repl pour write, elle nous permet de concaténer tout en vérifiant si la syntaxe est respectée*)
-let concat sep l_str = 
+(*let concat sep l_str = 
 
   (*on vérifie s'il y a '"' au début du texte à ajouter dans un fi*)
   let rec aux acc l nb= 
     if nb = 0 then (
       match l with
         (*on teste si c'est le string de la liste qui commence un caractére '"' est le premier de la liste l_str (puisque acc est vide) et on enlève ce caractère*)
-        |x::xs -> if x.[0]=='"' then let x'=String.sub x 1 (String.length x -1) in aux (acc^sep^x') xs (nb+1)
+        |x::xs -> if x.[0]=='"' then let x'=String.sub x 1 (String.length x -1) in aux (acc^x') xs (nb+1)
             else (print_endline "write : le texte à écrire dans le fichier doit être entre \"...\" \n syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; "")
-        |[] -> ""(* cas où l'utilisateur fait write file_name " " avec 0 ou plusieurs espaces ou *)
+        |[] -> ""(* cas où l'utilisateur fait write file_name " " avec 0 ou plusieurs espaces, ce cas d'erreur est déja gérer dans le repl *)
     )
     
     else(
       match l with
-        |x::[] -> if (x.[String.length x -1]=='"') then let x'=String.sub x 0 (String.length x -1) in acc^sep^x'
+        (*|x::[] -> let len  = String.length x in 
+          if len = 0 then ""
+          else if (x.[len -1]='"') then let x'=String.sub x 0 (len -1) in acc^sep^x'
               else begin print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
-              "" end (*On retourne la chaîne vide en cas d'erreur*)
-        |[] -> acc
+              "" end (*On retourne la chaîne vide en cas d'erreur*)*)
+        |[] -> let len  = String.length acc in if len = 0 then ""
+        else if (acc.[len -1]='"') then String.sub acc 0 (len -1)
+              else begin print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
+              "" end
         |x::xs -> let len = String.length x in begin
           match x.[0],x.[len -1] with 
             |'"',_ -> print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"";
                     ""
             (*cas d'échappement de '"' avec le '\'*)
             |'\\',_ -> (
-              if String.length x > 1 then (
-                if (x.[1]=='"') then let x'=String.sub x 1 (String.length x -1) in aux (acc^sep^x') xs (*on enlève le caractère '\' *)
+              if len > 1 then (
+                if (x.[1]='"') then let x'=String.sub x 1 (String.length x -1) in aux (acc^sep^x') xs (*on enlève le caractère '\' *)
                 else aux (acc^sep^x) xs) (nb+1)
               else aux (acc^sep^x) xs (nb+1)) 
             (*cas d'un mot avec un '"' dans le texte pas la fin puis que la liste de mot n'est pas vide, on teste si l'utilisateur l'a bien déspécialiser*)
-            |(_,'"')-> if x.[len-2]== '\\' then let x'=String.sub x 0 (String.length x -1) in aux (acc^sep^x') xs (nb+1)
+            |(_,'"')-> if (len >1) then (
+                        if (x.[len-2]== '\\') then let x'=String.sub x 0 (String.length x -1) in aux (acc^sep^x') xs (nb+1)
+                        else (print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\"" ;""))
                       else ( print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
                                                   "" )
             |(_,_)-> aux (acc^sep^x) xs (nb+1)
           end)
-  in aux "" l_str 0 
+  in aux "" l_str 0 *)
 
+let concat sep l_str = 
+  let rec aux acc l nb = match l with
+    |[] -> let len_s = String.length acc in
+      if((len_s=0) && (not(nb=0))) then (print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" " ; "")(*ca cas correspond à lorsque l'ulisateur ne met pas un guillement fermant*)
+      else acc
+  
+    |x::xs -> let len = String.length x in
+      if nb = 0 then (
+        if x.[0] = '"' then let x' = String.sub x 1 (len-1) in aux x' xs 1
+        else (print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" " ; ""))
+      else if (xs = []) then (
+        if (x.[len-1]='"') then let x' = String.sub x 0 (len-1) in acc^sep^x'
+        else (print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\", merci de mettre le texte entre \"\" " ; "")
+      )
+      else aux (acc^sep^x) xs (nb+1)
+  in aux "" l_str 0
 
 (*Cette fonction permet de se déplacer dans le dossier qui correspond au current_path du filesystem, comme un parcours de l'arbre vers un noeud interne correspond
 On l'utilise dans repl pour le cas de mkdir, touch,...*)

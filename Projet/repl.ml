@@ -53,7 +53,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             
         | "write"::tockens' -> begin
           match tockens' with
-              |[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\"";
+              |[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; loop fs
               |_::[] -> print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; loop fs
               |x::xs -> let nd = estPresentBis (Name x) fs.root.children in begin (*on ne vérifie pas si x est contient un "/", parce qu'on est sûr que si le fichier de ce nom existe ça été déjà vérifier à la création avec touch*)
                 match nd with

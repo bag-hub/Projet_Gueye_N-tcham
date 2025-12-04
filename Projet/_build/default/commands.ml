@@ -18,21 +18,28 @@ let pwd fs = print_endline (path_to_string fs.current_path)
 
 (*mkdir permet de vérifier si un fichier  est dans un des repertoire de filesystem, Si c'est le cas, elle renvoi la confirmation ... Sinon elle creer ce element dans le directory de filesystem*)
 let mkdir nameD fs = 
-    let nd = estPresentBis nameD fs.root.children
-    in match nd with 
-        |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
-                    in {root=new_dir; current_path=fs.current_path}
-        |Some ndO-> begin 
-            match ndO with 
-                |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe";
-                            fs
-                |Dir _d -> print_endline "mkdir: impossible de créer un répertoire de ce nom car un dossier de ce nom existe déjà"; 
-                            fs
-                    end
+
+    match (cd_current_dir fs fs.current_path) with 
+    |Some d -> let nd = estPresentBis nameD d.children
+            in begin
+                match nd with 
+                |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
+                            in {root=new_dir; current_path=fs.current_path}
+                |Some ndO-> begin 
+                    match ndO with 
+                        |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe";
+                                    fs
+                        |Dir _d -> print_endline "mkdir: impossible de créer un répertoire de ce nom car un dossier de ce nom existe déjà"; 
+                                    fs
+                            end
+                end
+    |None -> print_string "yes";fs (*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
 
 (*touch*)
 let touch file_name fs = match Filesystem.isName file_name with
-    |Some file_name' -> let node = estPresentBis file_name' fs.root.children
+    |Some file_name' -> let current_dir = cd_current_dir fs fs.current_path in begin
+        match current_dir with 
+            |Some dir' -> let node = estPresentBis file_name' dir'.children
                     in begin 
                         match node with
                             |Some nd -> begin 
@@ -44,7 +51,9 @@ let touch file_name fs = match Filesystem.isName file_name with
                                         end
                             |None-> let nouveau_root = {name=fs.root.name;children=(File {name=file_name';content=""})::fs.root.children} in {root=nouveau_root;current_path=fs.current_path}
                         end
-    |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére \"/\"";
+            |None -> fs(*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier *)
+                    end
+    |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére '/'";
             fs
 
 
@@ -81,7 +90,7 @@ let cat file_name fs = let file_name' = Filesystem.isName file_name
         |None -> print_endline "cat: Erreur un fichier portant ce nom n'existe pas dans ce répertoire"
 
 (*write file_name texte_a_ajouter
-dans le texte à ajouter on doit pas mettre un caractére '"' tout seul ou au début d'un mot ou à la fin d'un sans le déspécialiser avec '\', on autoriser le fait demettre '"' au milieu d'un mot*)
+dans texte à ajouter, on a le droit de mettre un ou plusieurs '"'(pas besoin de déspécialiser) dès lors que tout le texte qu'on souhaite ajouté est entre ""*)
 let write (fl:file) str fs = 
     let new_file = {name=fl.name; content=fl.content^str}
         in (let new_root = {name=fs.root.name;children=
@@ -100,10 +109,19 @@ let cd nom_chemin fs =
     let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
-        |x::xs-> begin match Filesystem.search fs.root.children (Name x) with
-            |None -> print_endline "cd : ce chemin est invalide"; false,fs
-            |Some y -> aux xs (acc@[y.name])
-            end
+        |x::xs->
+            if (x= "..") then 
+                let acc' = begin
+                match acc with
+                    |[] -> print_endline "Vous êtes déjà à la racine cd .. ne marche plus" ; []
+                    |_ -> removeLast acc 
+                    end
+                in aux xs acc'
+            else(begin 
+                match Filesystem.search fs.root.children (Name x) with(*peut être enlever search et mettre isPresent*)
+                    |None -> print_endline "cd : ce chemin est invalide"; false,fs
+                    |Some y -> aux xs (acc@[y.name])
+                end)
     in aux nom_chemin fs.current_path
 
 
