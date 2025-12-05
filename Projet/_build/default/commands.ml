@@ -170,10 +170,10 @@ let find nomFichier fs =
                  Some(chemin @ [f.name]))
                         else auxFind xs chemin
               |Dir d -> if d.name = nomFichier  then (
-                print_endline(path_to_string (chemin @[d.name]));
+                print_endline(path_to_string (chemin @ (d.name ::[]))^"/") ;
                 auxFind xs chemin)
                 else  
-                    match auxFind d.children (chemin @ [d.name]) with
+                    match auxFind d.children (chemin @ (d.name ::[])) with
                     |None -> auxFind xs chemin
                     |Some chemin -> Some chemin
             in 
