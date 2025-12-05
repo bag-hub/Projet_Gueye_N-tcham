@@ -224,6 +224,7 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
         (print_endline "élément introuvable"; fs)
       else *)
 
+(*cp idee*)
       
 let cp node_name path fs =
   match cd_current_dir fs fs.current_path with
@@ -232,22 +233,21 @@ let cp node_name path fs =
       fs
   | Some dir -> begin
       match estPresentBis node_name dir.children with
-          |None -> print_endline "cp: elts introuvable"; fs
+          |None -> print_endline "cp: elts introuvable"; 
+             fs
           |Some elt ->  let start_copie = copieBis elt in
             begin
               match cd_current_dir fs path with
-               |None -> print_endline "cp : chemin cible invalide"; fs
-               |Some dir -> begin
-                   match estPresentBis node_name dir.children with
+               |None -> print_endline "cp : chemin cible invalide"; 
+                  fs
+               |Some dir_cible-> begin
+                   match estPresentBis node_name dir_cible.children with
                                |Some _ -> print_endline"cp: un elt de ce nom existe déjà"; fs
                                |None -> 
-                                      let dir_nouveau = {dir with children = start_copie :: dir.children} in
+                                     let dir_nouveau = {name = dir_cible.name; children = start_copie :: dir.children} in
                                      let nouveau_root = Filesystem.replace_dir fs.root path dir_nouveau in 
                                      {fs with root = nouveau_root}
                                end
                             end
                         end
-      
-  
-      
       

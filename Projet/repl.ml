@@ -91,7 +91,8 @@ let rec loop (fs : Filesystem.filesystem) : unit =
            (*Commande cp action*)
          |"cp" :: tockens' -> begin
           match tockens' with
-          | x::xs::[] -> let fs' = cp (Name x) (split_sh xs) fs in 
+          | x::xs::[] -> 
+            let fs' = cp (Name x) (split_sh xs) fs in 
            loop fs'
           |_->print_endline"cp error"; loop fs
          end
