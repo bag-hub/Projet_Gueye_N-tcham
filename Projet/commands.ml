@@ -203,12 +203,13 @@ let cp node_name path fs =
                   fs
                |Some dir_cible-> begin
                    match estPresentBis node_name dir_cible.children with
-                               |Some _ -> print_endline"cp: un elt de ce nom existe déjà"; fs
-                               |None -> 
-                                     let dir_nouveau = {name = dir_cible.name; children = start_copie :: dir_cible.children} in
-                                     let nouveau_root = Filesystem.replace_dir fs.root path dir_nouveau in 
+                        |Some _ -> print_endline"cp: un elt de ce nom existe déjà"; fs
+                        |None -> let dir_nouveau = 
+                            {name = dir_cible.name; children = start_copie :: dir_cible.children} in
+                            let nouveau_root = 
+                                Filesystem.replace_dir fs.root path dir_nouveau in 
                                      {fs with root = nouveau_root}
-                               end
-                            end
                         end
+                end
+        end
       
