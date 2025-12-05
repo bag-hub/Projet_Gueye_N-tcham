@@ -40,9 +40,6 @@ Action d'exécution:
 "CAT Command" : 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"CP Command" : 
-
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "MV Command" : 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -53,7 +50,7 @@ La commande find que nous avons implémentée permet de rechercher un élément 
      * Si l’élément est un dossier et que son nom correspond, le chemin absolu est également affiché (extension que nous avons choisie que nous avons pour cette commande)de la meme maniere.
      * Sinon, la fonction continue la recherche dans les sous-répertoires jusqu'a ce qu'il le trouve.... Si elle ne trouve pas , elle ne retourne rien (None Option).
   La fonction affiche tous les chemins absolus qui correspondent à l'elts qu'on cherche et qui ont été trouvés.
-  
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "RM Command"
 La commande rm permet de supprimer un élément du répertoire courant.
@@ -65,3 +62,7 @@ La commande rm permet de supprimer un élément du répertoire courant.
         La fonction removeBis est utilisée pour supprimer ce fichier ou ce dossier de la liste des enfantsdu repeertoire courant
         Un nouveau répertoire est reconstruit avec cette liste mise à jour sans l'element supprimer nafin de reajuster l'arborescence de notre systeme de fichier.
         La fonction replace_dir remonte la modification dans toute l’arborescence afin de mettre à jour la racine du système de fichiers.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+"CP Command" : 
+

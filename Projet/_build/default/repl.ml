@@ -97,9 +97,6 @@ let rec loop (fs : Filesystem.filesystem) : unit =
           |_->print_endline"cp error"; loop fs
          end
 
-
-
-
         | command :: _ ->
             Printf.eprintf "Command not found: %s\n%!" command;
             loop fs

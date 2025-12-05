@@ -21,8 +21,8 @@ let mkdir nameD fs =
     |Some d -> let nd = estPresentBis nameD d.children
             in begin
                 match nd with 
-                |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
-                            in {root=new_dir; current_path=fs.current_path}
+                |None -> let new_dir = add_to_dir fs.current_path fs.root (Dir ({name=nameD; children=[]}))
+                        in {root=new_dir; current_path=fs.current_path}
                 |Some ndO-> begin 
                     match ndO with 
                         |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe";
@@ -47,8 +47,8 @@ let touch file_name fs = match Filesystem.isName file_name with
                                     |File _fl-> print_endline "Il existe déja un fichier portant ce nom";
                                             fs
                                         end
-                            |None-> let nouveau_root = {name=fs.root.name;children=(File {name=file_name';content=""})::fs.root.children} in {root=nouveau_root;current_path=fs.current_path}
-                        end
+                            |None-> let new_dir = add_to_dir fs.current_path fs.root (File ({name=file_name'; content=""}))
+                        in {root=new_dir; current_path=fs.current_path} end
             |None -> fs(*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, 
                     on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier *)
                     end
@@ -152,29 +152,6 @@ let mv node_name _ fs = let d = cd_current_dir fs fs.current_path in
             |None -> fs )
     |None -> fs (* on peut pas avoir ce cas là avec le current_path, s'il est bien fait et mise à jour*)
 
-(*rm nomdelelement qui permet de supprimer un fichier ou un répertoire nomdelelement
-du répertoire courant. Elle affiche une erreur si aucun élément ne porte le nom nomdelelement
-dans le répertoire courant.*)
-(*let rm node_name = ()
-
-(*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
-toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
-si aucun élément ne porte nom nomdelelement dans le répertoire courant, ou si un
-élément porte déjà ce nom dans le répertoire accesible via nomduchemin.*)
-let mv node_name path_p = ()
-
-(*cp nomdelelement nomduchemin qui permet de copier (en le dupliquant) un fi-
-chier ou un répertoire nomdelelement dans le chemin relatif nomduchemin. Elle
-affiche une erreur dans les mêmes cas que la commande mv.*)
-let mv file_name path_p = ()*)
-
-(*find nomdufichier, qui affiche tous les fichiers s’appelant nomdufichier dans
-la sous-arborescence partant du répertoire courant. Le chemin absolu de chacun de ces
-fichiers est affiché.*)
-(*let find file_name fs = ()*)
-
-(*Essai pr le find *)
-(*Pas encore tester*)
 let find nomFichier fs =
    let rec auxFind liste chemin =
      match liste with 
@@ -209,22 +186,6 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
             let dir_nouveau = {name = dir.name; children = new_children}  in  
             let new_root = Filesystem.replace_dir fs.root fs.current_path dir_nouveau 
     in {fs with root = new_root}
-
-
-
-(*Essai du cp*)
-(* Essai du cp *)
-(*let cp node_name path fs =
-  match cd_current_dir fs fs.current_path with
-  | None ->
-      print_endline "Erreur: répertoire courant invalide";
-      fs
-  | Some dir ->
-      if estPresentBis node_name dir.children = None then
-        (print_endline "élément introuvable"; fs)
-      else *)
-
-(*cp idee*)
       
 let cp node_name path fs =
   match cd_current_dir fs fs.current_path with
