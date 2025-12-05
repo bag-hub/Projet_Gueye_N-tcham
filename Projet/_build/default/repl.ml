@@ -101,12 +101,19 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             | _ -> print_endline "find: cette commande prend exactement un argument"; loop fs
          end
            (*Commande cp action*)
-         |"cp" :: tockens' -> begin
+         |"cp"::tockens' -> begin
           match tockens' with
           | x::xs::[] -> 
             let fs' = cp (Name x) (List.map (fun x-> Name x) (split_sh xs)) fs in 
            loop fs'
-          |_->print_endline"cp error"; loop fs
+          |_->print_endline "cp : Cette commande neprends que deux arguments"; loop fs
+         end
+        |"mv"::tockens' -> begin
+          match tockens' with
+          | x::xs::[] -> 
+            let fs' = mv (Name x) (List.map (fun x-> Name x) (split_sh xs)) fs in 
+           loop fs'
+          |_->print_endline "mv : Cette commande neprends que deux arguments"; loop fs
          end
 
         | command :: _ ->

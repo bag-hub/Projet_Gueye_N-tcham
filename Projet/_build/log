@@ -1,9 +1,10 @@
 # dune exec ./main.exe
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
-# Shared cache location: /comptes/E25C898B/.cache/dune/db
-# Workspace root: /comptes/E25C898B/Projet_Gueye_N-tcham/Projet
-# Auto-detected concurrency: 28
+# Shared cache location: /home/bag-unbuntu/.cache/dune/db
+# Workspace root:
+# /home/bag-unbuntu/Documents/L3_infoM/pf/Projet_Gueye_N-tcham/Projet
+# Auto-detected concurrency: 12
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -13,4 +14,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /opt/opam-shared/default/bin/ocamlc.opt -config > /tmp/dune_a3d8a7_output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune_996847_output

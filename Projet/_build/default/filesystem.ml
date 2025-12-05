@@ -146,13 +146,11 @@ let rec removeBis l_node node_name = match l_node with
             removeBis xs node_name
             else 
               File fl::removeBis xs node_name
-        |Dir d ->if d.name = node_name then
-              removeBis xs node_name
+        |Dir d ->
+              if d.name = node_name then
+                removeBis xs node_name 
               else 
-                let children_nouveau = removeBis d.children node_name
-                in 
-                let dir_nouveau = Dir {d with children = children_nouveau} 
-                in dir_nouveau :: removeBis xs node_name
+                x :: removeBis xs node_name 
       end
 
 (*Cette fonction va me permettre de remonter la modofocation ou la suppression d'un elet à toute l'arborescence que j'ai construit dans rm*)
@@ -208,3 +206,18 @@ let rec dernier_elt liste =
         |_::xs -> dernier_elt xs
               
 
+(*Cette fonction sert à supprimer un node qui est au repertoire correspond à path dans le filesystem*)
+let delete_node node_name path fs =
+  match cd_current_dir fs path with
+  | None ->
+      print_endline "rm: Le répertoire parent spécifié n'existe pas ou est invalide";
+      fs
+  | Some dir_cible -> begin
+      match estPresentBis node_name dir_cible.children with
+          | None -> 
+              print_endline ("rm: L'élément \"" ^ (name_to_string node_name) ^ "\" est introuvable dans le répertoire cible."); 
+              fs
+          | Some _elt -> let new_children = removeBis dir_cible.children node_name in let dir_nouveau = {name = dir_cible.name; children = new_children} 
+                in let nouveau_root = replace_dir fs.root path dir_nouveau in {fs with root = nouveau_root}
+        end
+    

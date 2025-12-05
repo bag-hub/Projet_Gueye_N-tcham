@@ -143,14 +143,27 @@ let cd nom_chemin fs =
 toire nomdelelement dans le chemin relatif nomduchemin. Elle affiche une erreur
 si aucun élément ne porte nom nomdelelement dans le répertoire courant, ou si un
 élément porte déjà ce nom dans le répertoire accesible via nomduchemin.*)
-let mv node_name _ fs = let d = cd_current_dir fs fs.current_path in 
-    (*On vérifie s'il y a un node de name node_name après s'être déplacer sur dossier courant dèja*)
-    match d with 
-    |Some d' -> let node = estPresentBis node_name d'.children
-        in (match node with
-            |Some _node' -> fs
-            |None -> fs )
-    |None -> fs (* on peut pas avoir ce cas là avec le current_path, s'il est bien fait et mise à jour*)
+let mv node_name path fs =
+  match cd_current_dir fs fs.current_path with
+  | None -> print_endline "mv : répertoire cible introuvable"; fs
+  | Some dir_source ->
+    begin match estPresentBis node_name dir_source.children with
+      | None -> print_endline "mv: le dossier ou fichier que vous voulez déplacer n'existe pas"; fs
+      | Some elt ->
+        let copied = copieBis elt in
+        match cd_current_dir fs path with
+        | None -> print_endline "mv: chemin cible invalide"; fs
+        | Some dir_target ->
+          begin match estPresentBis node_name dir_target.children with
+          | Some _ -> print_endline "mv: il existe déjà un fichier ou dossier de ce nom dans le répertoire cible"; fs
+          | None -> let fs1 =
+                {root = replace_dir fs.root fs.current_path
+                           {name=dir_source.name;children = removeBis dir_source.children node_name };
+                current_path=fs.current_path}
+          in let fs2 = {root = replace_dir fs1.root path
+                           { dir_target with children = copied :: dir_target.children } ;current_path = fs1.current_path} in fs2
+          end
+    end
 
 let find nomFichier fs =
    let rec auxFind liste chemin =
@@ -159,14 +172,14 @@ let find nomFichier fs =
          | x::xs -> let _ = Filesystem.comparer nomFichier liste in
              match x with
               |File f -> if f.name = nomFichier then ( 
-                print_endline(path_to_string (chemin @[f.name]));
+                print_endline(path_to_string (chemin@[f.name]));
                  Some(chemin @ [f.name]))
                         else auxFind xs chemin
               |Dir d -> if d.name = nomFichier  then (
-                print_endline(path_to_string (chemin @ (d.name ::[]))^"/") ;
+                print_endline(path_to_string (chemin@(d.name ::[]))^"/") ;
                 auxFind xs chemin)
                 else  
-                    match auxFind d.children (chemin @ (d.name ::[])) with
+                    match auxFind d.children (chemin@(d.name ::[])) with
                     |None -> auxFind xs chemin
                     |Some chemin -> Some chemin
             in 
@@ -268,3 +281,4 @@ let rmext chemin fs =
                match dernier_elt elts with
                 |None -> print_endline "rmext: chemin vide"; fs
                 |Some cib -> rm cib fs)
+

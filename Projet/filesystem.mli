@@ -61,3 +61,6 @@ val add_to_dir : path -> directory -> node -> directory
 
 (*Recuperer le dernier elts de path qu' on a transformer en une liste de name*)
 val dernier_elt : name list -> name option
+
+(*Cette fonction sert à supprimer un node qui est au repertoire correspond à path dans le filesystem*)
+val delete_node : name -> name list -> filesystem -> filesystem
