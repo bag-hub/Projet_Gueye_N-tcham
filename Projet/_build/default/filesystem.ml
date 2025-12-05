@@ -147,10 +147,12 @@ in List.rev( aux p [] )
 (*qui sera utiliser dans le find*)
 (*1 / Comparer le nom de fichier auquels je veux appliquer find au fichier deja dans mon repertoire...*)
 let rec comparer node liste= match liste with
-        |[]-> print_string " repertoire est vide"
+        |[]-> false
         | x::xs -> match x with 
-                 |Dir _ -> print_string "Rien faire"
-                 |File f -> if f.name = node then print_string "Trouver" else comparer node xs
+                 |Dir _ -> comparer node xs
+                 |File f -> if f.name = node 
+                  then
+                    true else comparer node xs
 
 (*Pour le rm*)
 (*RemoveBis va nous permettre de supprimer un fichier si on le trouve dans le 

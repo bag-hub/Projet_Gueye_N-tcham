@@ -163,7 +163,7 @@ let find nomFichier fs =
    let rec auxFind liste chemin =
      match liste with 
          |[] -> None
-         | x::xs -> let () = Filesystem.comparer nomFichier liste in
+         | x::xs -> let _ = Filesystem.comparer nomFichier liste in
              match x with
               |File f -> if f.name = nomFichier then ( 
                 print_endline(path_to_string (chemin @[f.name]));
@@ -182,8 +182,7 @@ let find nomFichier fs =
    
 
 
-(*Essai de RM*)
-(*reflexion pas terminer*)
+(*rm command idée*)
 let rm node_name fs = match cd_current_dir fs fs.current_path with 
     |None ->print_endline"Erreur"; fs
     |Some dir -> 
@@ -215,17 +214,23 @@ let cp node_name path fs =
   | None ->
       print_endline "Erreur: répertoire courant invalide";
       fs
-  | Some dir -> 
+  | Some dir -> begin
       match estPresentBis node_name dir.children with
           |None -> print_endline "cp: elts introuvable"; fs
           |Some elt ->  let start_copie = copieBis elt in
+            begin
               match cd_current_dir fs path with
                |None -> print_endline "cp : chemin cible invalide"; fs
-               |Some dir -> match estPresentBis node_name dir.children with
+               |Some dir -> begin
+                   match estPresentBis node_name dir.children with
                                |Some _ -> print_endline"cp: un elt de ce nom existe déjà"; fs
                                |None -> 
                                       let dir_nouveau = {dir with children = start_copie :: dir.children} in
-let nouveau_root = Filesystem.replace_dir fs.root path dir_nouveau in {fs with root = nouveau_root}
+                                     let nouveau_root = Filesystem.replace_dir fs.root path dir_nouveau in 
+                                     {fs with root = nouveau_root}
+                               end
+                            end
+                        end
       
   
       

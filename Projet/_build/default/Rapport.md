@@ -1,23 +1,43 @@
 -----------------------------------------------------------------------------
 #Cet documents va nous permettre d'expliquer notre code et donner les precisions sur les cas qu'on na traiter#.
+#---- GUEYE BAYE && N'TCHAM KOMINA ROGER ----#
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "PWD Command" : 
+Elle affiche le chemin absolu du répertoire courant. Elle part toujours de la racine de notre arborescence (notre système de fichier en général).
+L'action d'exécution que fait notre commande "PWD" se résume comme suit:
+  -On récupère le chemin courant stocké dans le "current_path" du système de fichiers (Ce chemin est une liste des noms représentant les directory successifs depuis la racine). 
+  -On transforme cette liste de noms en une chaîne de caractères avec la fonction "path_to_string" représentant le chemin complet qui nous sera retourner dans le terminal. Ce qui garantit que le chemin part de la racine de l'arborescence.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"MKDIR COMMAND" :
+"MKDIR Command" :
+La commande "mkdir" permet de créer un nouveau directory dans le répertoire courant. Elle vérifie d’abord que le nom choisi n’existe pas déjà, puis le créer dans mon arborescence, le directory si elle n'y est pas déjà.
+L'action d'exécution se déroule comme suit :
+  -On récupère le répertoire courant grâce à la fonction "cd_current_dir".
+  -On vérifie si un élément portant ce nom existe déjà dans ce répertoire avec la fonction "estPresentBis".
+  -Si un élément existe déjà, un message d’erreur est générer pour le signaler; sinon le nouveau directory se creer et notre arborescence se met à jours avec le nouveau directory.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "LS Command" : 
+Notre commande "ls" nous sert juste à lister le contenu du répertoire courant. On l'utilise juste pour parcourir notre arborescence et visualiser les éléments présent dans notre système de fichier ou dans un quelconques directory de notre arborescence et les afficher. Son action est détaillé comme suit :
+  -On récupère le répertoire courant grâce à la fonction "cd_current_dir".
+  -On parcourt la liste des enfants de ce répertoire.
+  -On affiche successivement les noms de chaque élément présent dans ce répertoire.
+En gros on explore notre arbre et on collecte pour affichage les elts de notre arbre.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"CAT Command" : 
+"TOUCH Command" : 
+Notre "touch" gère seulement la création de fichier vide. 
+Action d'exécution:
+  -La commande "touch" commence par vérifier la validité du nom grâce à la fonction "isName". 
+  -Si le nom est correct, elle cherche dans le répertoire courant avec la fonction "estPresentBis" pour voir si un élément existant a déjà ce nom. 
+  -Si aucun élément n’existe, elle crée un nouveau fichier vide. Sinon, elle affiche un message de retour signalant l’erreur.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "WRITE Command" : 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"FIND Command" : 
+"CAT Command" : 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 "CP Command" : 
