@@ -28,8 +28,6 @@ val remove : node list -> name -> node list
 (*permet de donné une liste de name à partir d'un string en décomposant avec le caractère '\' , elle est utilisée dans cd*)
 val split_sh : string -> string list
 
-(*????*)
-val search : node list -> name -> directory option
 
 (*On a choisi de définir une fonction concat pour vérifier si on veux mettre des '"' dans le texte de la commande write est ce qu'on les a bien déspécilisé ce caractère*)
 val concat : string -> string list -> string

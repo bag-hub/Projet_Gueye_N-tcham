@@ -69,16 +69,8 @@ let rec remove l_node node_name = match l_node with
 
 (*permet de donné une liste de name à partir d'un string en décomposant avec le caractère '\' , elle est utilisée dans cd, elle peur servir pour le cas du chemin relatif*)
 let split_sh str =
-  String.split_on_char '/' str (*Si on a deux caractéres '/' consecutifs on a dans la liste des chaines vides, on ne les enléve pas afin que cela nous de nous arrêter dès qu'on a une chaine vide dans la fonction puisque on est sur que le name d'un node n'est pas vide *)
-
-(*?????*)
-let rec search lst nm = match lst with
-  |[] -> None 
-  |x::xs -> begin 
-    match x with 
-      |Dir d -> if d.name=nm then Some d else search xs nm
-      |File _fl-> None
-    end
+  let l_str = String.split_on_char '/' str 
+ in List.filter (fun t -> t <> "") l_str(*on supprime les chînes vide de la liste *)
 
 (*Fonctions ajoutés pour la commande write*)
 
