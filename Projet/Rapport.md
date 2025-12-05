@@ -3,14 +3,14 @@
 #---- GUEYE BAYE && N'TCHAM KOMINA ROGER ----#
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"PWD Command" : 
+"pwd" : 
 Elle affiche le chemin absolu du répertoire courant. Elle part toujours de la racine de notre arborescence (notre système de fichier en général).
 L'action d'exécution que fait notre commande "PWD" se résume comme suit:
   -On récupère le chemin courant stocké dans le "current_path" du système de fichiers (Ce chemin est une liste des noms représentant les directory successifs depuis la racine). 
   -On transforme cette liste de noms en une chaîne de caractères avec la fonction "path_to_string" représentant le chemin complet qui nous sera retourner dans le terminal. Ce qui garantit que le chemin part de la racine de l'arborescence.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"MKDIR Command" :
+"mkdir" :
 La commande "mkdir" permet de créer un nouveau directory dans le répertoire courant. Elle vérifie d’abord que le nom choisi n’existe pas déjà, puis le créer dans mon arborescence, le directory si elle n'y est pas déjà.
 L'action d'exécution se déroule comme suit :
   -On récupère le répertoire courant grâce à la fonction "cd_current_dir".
@@ -18,7 +18,7 @@ L'action d'exécution se déroule comme suit :
   -Si un élément existe déjà, un message d’erreur est générer pour le signaler; sinon le nouveau directory se creer et notre arborescence se met à jours avec le nouveau directory.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-"LS Command" : 
+"ls" : 
 Notre commande "ls" nous sert juste à lister le contenu du répertoire courant. On l'utilise juste pour parcourir notre arborescence et visualiser les éléments présent dans notre système de fichier ou dans un quelconques directory de notre arborescence et les afficher. Son action est détaillé comme suit :
   -On récupère le répertoire courant grâce à la fonction "cd_current_dir".
   -On parcourt la liste des enfants de ce répertoire.
