@@ -47,7 +47,7 @@ let rec estPresentBis node_name liste =
             end
 
 
-(*??????*)
+(*tester si le un string est un name pour vérifier si le nom d'un node que l'on veux créer est valide*)
 let isName str = 
   let lst = List.of_seq(String.to_seq str) (*je voulais créer une liste de chaine de caractère du string str*)
     in let rec aux l acc =
@@ -55,6 +55,9 @@ let isName str =
         |[] -> Some (Name acc)
         |x::xs -> if x='/' then None else (aux xs ((acc^String.make 1 x)))
     in aux lst ""
+
+(*conversion d'un name en un string, utilisée dans touch*)
+let name_to_string name_p = match name_p with |Name str -> str
 
 (*Cette fonction enleve l'élément e de type de la liste de type 'a list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
 (*On peut l'utiliser dans mv*)

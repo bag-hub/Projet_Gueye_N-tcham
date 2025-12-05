@@ -33,7 +33,7 @@ let mkdir nameD fs =
                 end
     |None -> print_string "yes";fs (*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
 
-(*touch*)
+(*touch file_name*)
 let touch file_name fs = match Filesystem.isName file_name with
     |Some file_name' -> let current_dir = cd_current_dir fs fs.current_path in begin
         match current_dir with 
@@ -212,4 +212,47 @@ let cp node_name path fs =
                         end
                 end
         end
-      
+
+let mkdirEx path_p fs = 
+    let path_rev = List.rev path_p in
+    match path_rev with 
+    |nameD::path_rev' -> let path = List.rev path_rev' in (
+        match cd_current_dir fs path with
+        |Some d -> let nd = estPresentBis nameD d.children
+                in (
+                    match nd with 
+                    |None -> let new_dir = add_to_dir path fs.root (Dir ({name=nameD; children=[]}))
+                            in {root=new_dir; current_path=fs.current_path}
+                    |Some ndO-> ( 
+                        match ndO with 
+                            |File _fl -> print_endline "mkdir: impossible de créer le répertoire de ce nom car un fichier portant ce nom existe dans le répertoire cible";
+                                        fs
+                            |Dir _d -> print_endline "mkdir: impossible de créer un répertoire de ce nom car un dossier de ce nom existe déjà dans le répertoire cible"; 
+                                        fs ))
+        
+        |None -> print_endline "mkdir: Chemin invalide";fs )
+    |[] -> print_endline "mkdir: Chemin invalide";fs
+
+
+(*touchEx file_name*)
+let touchEx path_p fs = 
+    let path_rev = List.rev path_p in
+    match path_rev with 
+    |nameD::path_rev' -> let path = List.rev path_rev' in (
+        match cd_current_dir fs path with
+        |Some d -> let nd = estPresentBis nameD d.children
+                in (
+                    match nd with 
+                    |None -> ( match isName (name_to_string nameD) with
+                        |Some nameD' -> let new_dir = add_to_dir path fs.root (File ({name=nameD'; content=""}))
+                            in {root=new_dir; current_path=fs.current_path}
+                        |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére '/'"; fs)
+                    |Some ndO-> ( 
+                        match ndO with 
+                            |File _fl -> print_endline "touch: impossible de créer le fichier de ce nom car un fichier portant ce nom existe dans le répertoire cible";
+                                        fs
+                            |Dir _d -> print_endline "touch: impossible de créer un fichier de ce nom car un dossier de ce nom existe déjà dans le répertoire cible"; 
+                                        fs ))
+        
+        |None -> print_endline "touch: Chemin invalide";fs )
+    |[] -> print_endline "touch: Chemin invalide";fs

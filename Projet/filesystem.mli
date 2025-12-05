@@ -22,6 +22,9 @@ val estPresentBis : name -> node list -> node option
 elle prends en paramétre un string, et retourne None si ce string contient un caractére '/' et le Name de ce string sinon*)
 val isName : string -> name option
 
+(*conversion d'un name en un string*)
+val name_to_string : name -> string
+
 (*Cette fonction enleve le node de nom name de la liste de type node list donnés en paramétre s'il e présent et renvoie la nouvelle liste obtenu, la même liste sinon*)
 val remove : node list -> name -> node list
 

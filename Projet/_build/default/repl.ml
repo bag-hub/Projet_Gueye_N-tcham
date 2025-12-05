@@ -24,18 +24,28 @@ let rec loop (fs : Filesystem.filesystem) : unit =
                 loop fs)
 
         |"mkdir"::tockens'-> (match tockens' with 
-              |x::[]-> (match (Filesystem.isName x) with 
+              |x::[]-> 
+                if x.[0] <>'.' then 
+                (match (Filesystem.isName x) with 
                     |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs'
                     |None-> print_endline "mkdir:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
+                else (let fs' = let path = (List.map (fun x-> Name x) (split_sh x)) 
+                              in mkdirEx (List.tl path) fs 
+                                in loop fs')
               |_-> print_endline "mkdir ne prends qu'un seul argument";
                     loop fs)
 
-        | "touch"::tockens' -> begin
-            match tockens' with
-              |x::[] -> let fs' = touch x fs in loop fs'
-              |_-> print_endline "touch: ce commande ne prends qu'un seul argument";
-                  loop fs
-          end
+        | "touch"::tockens' -> (match tockens' with 
+              |x::[]-> 
+                if x.[0] <>'.' then 
+                (match (isName x) with 
+                    |Some (Name x') -> let fs' = touch x' fs in loop fs'
+                    |None-> print_endline "touch:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
+                else (let fs' = let path = (List.map (fun x-> Name x) (split_sh x)) 
+                              in touchEx (List.tl path) fs 
+                                in loop fs')
+              |_-> print_endline "touch : Cette commande ne prends qu'un seul argument";
+                    loop fs)
 
         | "ls"::tockens'->(match tockens' with 
                               |[]->ls fs; 
