@@ -48,12 +48,16 @@ val comparer: name -> node list -> unit
 val removeBis: node list -> name -> node list
 
 (* Cette fonction va me permettre de le mettre à la bonne place dan,s l'arborescence*)
-(*val replace_dir : directory -> name list -> directory -> directory*)
+val replace_dir : directory -> name list -> directory -> directory
+
+(*cette fonction copieBis permet de copier un fichier avec le meme contebu et dans le cas d'un dossier , recopie toute l'arborescence de ce node.... genre duplique le dossier avec les fichier à l'intériur*)
+val copieBis : node -> node
+
 
 
 
 (*(*Ajoute le node dans le fs au dossier correspodant à path_p*)
 val add_node : filesystem -> path -> node -> filesystem*)
 
-(*(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
-val add_dir : directory -> path -> node -> directory*)
+(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
+val add_to_dir : path -> directory -> node -> directory

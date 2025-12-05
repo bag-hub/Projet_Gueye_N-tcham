@@ -76,6 +76,10 @@ let rec loop (fs : Filesystem.filesystem) : unit =
               |_->print_endline "cd: Cette commande prends en arguments un seul arguments qui est un chemin vers le répertoire dans lequel vous souhaitez vous rendre ";
                   loop fs
             end
+        |"rm"::tockens' -> begin
+          match tockens' with
+          |x::[] -> let fs' = rm (Name x) fs in loop fs'
+          |_ -> print_endline "rm: cette commande prend exactement un argument"; loop fs end
         | command :: _ ->
             Printf.eprintf "Command not found: %s\n%!" command;
             loop fs

@@ -48,13 +48,14 @@ let path_to_string path =
 
 (*Cette fonction prends en paramétre le nom d'un dossier ou un fichier et une liste de node(dossier ou fichier) et retourne ce node s'il existe dans la liste et Node sinon*)
 (*donné le fs en paramétre pour rechercher la présence du dossier dans le répertoire courant avec current_path*)
-let rec estPresentBis node liste = match liste with
-                            |[]-> None
-                            |x::xs-> begin
-                                match x,node with 
-                                    |File fl,Name nf-> if fl.name=Name nf then Some (File fl) else estPresentBis node xs
-                                    |Dir d,Name nf-> if d.name=Name nf then Some (Dir d) else estPresentBis node xs
-                                    end
+let rec estPresentBis node_name liste = 
+  match liste with
+    |[]-> None
+    |x::xs-> begin
+        match x with 
+            |File fl -> if fl.name=node_name then Some (File fl) else estPresentBis node_name xs
+            |Dir d -> if d.name=node_name then Some (Dir d) else estPresentBis node_name xs
+            end
 
 (*!!!!!!!!!!!!!!!!pas besoin*)
 (*let concat a b = match a,b with
@@ -98,48 +99,6 @@ let rec search lst nm = match lst with
 (*Fonctions ajoutés pour la commande write*)
 
 (*concaténe les éléments d'une liste de string, on l'utilise dans le repl pour write, elle nous permet de concaténer tout en vérifiant si la syntaxe est respectée*)
-(*let concat sep l_str = 
-
-  (*on vérifie s'il y a '"' au début du texte à ajouter dans un fi*)
-  let rec aux acc l nb= 
-    if nb = 0 then (
-      match l with
-        (*on teste si c'est le string de la liste qui commence un caractére '"' est le premier de la liste l_str (puisque acc est vide) et on enlève ce caractère*)
-        |x::xs -> if x.[0]=='"' then let x'=String.sub x 1 (String.length x -1) in aux (acc^x') xs (nb+1)
-            else (print_endline "write : le texte à écrire dans le fichier doit être entre \"...\" \n syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\""; "")
-        |[] -> ""(* cas où l'utilisateur fait write file_name " " avec 0 ou plusieurs espaces, ce cas d'erreur est déja gérer dans le repl *)
-    )
-    
-    else(
-      match l with
-        (*|x::[] -> let len  = String.length x in 
-          if len = 0 then ""
-          else if (x.[len -1]='"') then let x'=String.sub x 0 (len -1) in acc^sep^x'
-              else begin print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
-              "" end (*On retourne la chaîne vide en cas d'erreur*)*)
-        |[] -> let len  = String.length acc in if len = 0 then ""
-        else if (acc.[len -1]='"') then String.sub acc 0 (len -1)
-              else begin print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
-              "" end
-        |x::xs -> let len = String.length x in begin
-          match x.[0],x.[len -1] with 
-            |'"',_ -> print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"";
-                    ""
-            (*cas d'échappement de '"' avec le '\'*)
-            |'\\',_ -> (
-              if len > 1 then (
-                if (x.[1]='"') then let x'=String.sub x 1 (String.length x -1) in aux (acc^sep^x') xs (*on enlève le caractère '\' *)
-                else aux (acc^sep^x) xs) (nb+1)
-              else aux (acc^sep^x) xs (nb+1)) 
-            (*cas d'un mot avec un '"' dans le texte pas la fin puis que la liste de mot n'est pas vide, on teste si l'utilisateur l'a bien déspécialiser*)
-            |(_,'"')-> if (len >1) then (
-                        if (x.[len-2]== '\\') then let x'=String.sub x 0 (String.length x -1) in aux (acc^sep^x') xs (nb+1)
-                        else (print_endline "Erreur de syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\"" ;""))
-                      else ( print_endline "Erreur : syntaxe : write <nomdufichier> \"le contenu du texte à rajouter\" pour le écrire le caractère '\"' entre deux espaces dans le texte vous devez l'échapper avec '\', par exemple \\\"" ;
-                                                  "" )
-            |(_,_)-> aux (acc^sep^x) xs (nb+1)
-          end)
-  in aux "" l_str 0 *)
 
 let concat sep l_str = 
   let rec aux acc l nb = match l with
@@ -245,6 +204,25 @@ let copieBis node =
         in 
         auxCopieBis node
 
+(*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
+let rec add_to_dir path_p dir_p node_p =
+  match path_p with 
+    |[] -> {name=dir_p.name; children=node_p::(dir_p.children)}
+    |x::xs -> 
+      let new_children = List.map (fun node ->
+        match node with 
+          |Dir d -> if d.name=x then Dir (add_to_dir xs d node_p)
+                else node
+          |File _ ->  node) dir_p.children 
+      in {name=dir_p.name; children=new_children}
+      (*let rec aux l =
+        match l with 
+          |y::ys -> begin match y with 
+            |Dir d -> if x = d.name then add_to_dir xs d node_p
+            |File _fl -> aux ys end
+          |[] -> None 
+      in aux dir_p.children*)
+              
 
 
 (*Ajoute le node dans le fs au dossier correspodant à path_p*)
