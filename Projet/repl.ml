@@ -92,7 +92,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
          |"cp" :: tockens' -> begin
           match tockens' with
           | x::xs::[] -> 
-            let fs' = cp (Name x) (split_sh xs) fs in 
+            let fs' = cp (Name x) (List.map (fun x-> Name x) (split_sh xs)) fs in 
            loop fs'
           |_->print_endline"cp error"; loop fs
          end
