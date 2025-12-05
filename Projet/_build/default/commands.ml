@@ -56,11 +56,13 @@ let touch file_name fs = match Filesystem.isName file_name with
 
 
 (*ls directory_name*)
-let ls fs = if fs.root.children = [] then print_endline "Ce répertoire vide"
-    else begin 
-    let rec aux l = match l with
-        |[]->print_endline ""
-        |x::xs-> begin
+let ls fs = let d = cd_current_dir fs fs.current_path in
+    match d with 
+    |Some d' -> if d'.children = [] then print_endline "Ce répertoire vide"
+        else begin 
+        let rec aux l = match l with
+            |[]->print_string ""
+            |x::xs-> begin
             match x with 
                 |File fl-> begin match fl.name with 
                             | Name s->print_endline s; 
@@ -69,8 +71,9 @@ let ls fs = if fs.root.children = [] then print_endline "Ce répertoire vide"
                             | Name s->print_endline (s^"/");
                                 aux xs end
             end
-    in aux fs.root.children
-    end
+        in aux d'.children
+        end
+    |None -> print_string "" (*on n'affiche rien, ce cas ne devrait jamais arriver si le current path est bien créer et bien gérer lors de l'éxécution des commandes*)
 
 (*cat file_name*)
 let cat file_name fs = let file_name' = Filesystem.isName file_name
@@ -104,7 +107,9 @@ retourne un couple de boléen et un filsystem qui indique si on s'est déplacé 
 mais avec un current_path probabablement différent  *)
 (*ok/error constructor*)
 let cd nom_chemin fs = 
-    let rec aux lst acc = 
+    match cd_current_dir fs fs.current_path with 
+    |Some c_dir -> begin
+    let rec aux lst acc dir_p= 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
         |x::xs->
@@ -114,13 +119,63 @@ let cd nom_chemin fs =
                     |[] -> print_endline "Vous êtes déjà à la racine cd .. ne marche plus" ; []
                     |_ -> removeLast acc 
                     end
-                in aux xs acc'
+                in  begin 
+                    match cd_current_dir fs acc' with 
+                        |Some d -> aux xs acc' d
+                        |None -> false,fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
+                    end
             else(begin 
-                match Filesystem.search fs.root.children (Name x) with(*peut être enlever search et mettre isPresent*)
+                match estPresentBis (Name x) dir_p.children with(*peut être enlever search et mettre isPresent*)
                     |None -> print_endline "cd : ce chemin est invalide"; false,fs
-                    |Some y -> aux xs (acc@[y.name])
+                    |Some y -> begin  match y with
+                        | Dir d -> aux xs (acc@[d.name]) d
+                        | File _ -> print_endline "cd : ce chemin est invalide"; false,fs
+                    end
                 end)
-    in aux nom_chemin fs.current_path
+    in aux nom_chemin fs.current_path c_dir end
+    |None -> false,fs
+(*
+let cd nom_chemin fs =
+  let rec aux lst acc dir_p =
+    match lst with
+    | [] ->
+        true, { root = fs.root; current_path = acc }
+
+    | x :: xs ->
+        if x = ".." then
+          let acc' =
+            match acc with
+            | [] ->
+                print_endline "Vous êtes déjà à la racine cd .. ne marche plus";
+                []
+            | _ ->
+                removeLast acc
+          in
+          (* Aller vers le parent *)
+          begin
+            match cd_current_dir fs acc' with
+            | Some d -> aux xs acc' d
+            | None   -> false, fs
+          end
+
+        else
+          (* Aller vers un sous-répertoire *)
+          match estPresentBis (Name x) dir_p.children with
+          | None ->
+              print_endline "cd : ce chemin est invalide";
+              false, fs
+
+          | Some y ->
+              match y with
+              | Dir d ->
+                  aux xs (acc @ [ d.name ]) d
+              | File _ ->
+                  print_endline "cd : ce chemin est invalide";
+                  false, fs
+  in
+  aux nom_chemin fs.current_path fs.root
+
+*)
 
 
 (*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-

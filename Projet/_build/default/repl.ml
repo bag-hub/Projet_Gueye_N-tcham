@@ -24,11 +24,11 @@ let rec loop (fs : Filesystem.filesystem) : unit =
                 loop fs)
 
         |"mkdir"::tockens'-> (match tockens' with 
-                              |x::[]-> (match (Filesystem.isName x) with 
-                                    |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs'
-                                    |None-> print_endline "mkdir:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
-                              |_-> print_endline "mkdir ne prends qu'un seul argument";
-                                    loop fs)
+              |x::[]-> (match (Filesystem.isName x) with 
+                    |Some (Name x') -> let fs' = mkdir (Name x') fs in loop fs'
+                    |None-> print_endline "mkdir:le nom d'un fichier ne doit pas contenir de \"/\"";loop fs)
+              |_-> print_endline "mkdir ne prends qu'un seul argument";
+                    loop fs)
 
         | "touch"::tockens' -> begin
             match tockens' with

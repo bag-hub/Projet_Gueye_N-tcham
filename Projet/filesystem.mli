@@ -54,10 +54,5 @@ val replace_dir : directory -> name list -> directory -> directory
 val copieBis : node -> node
 
 
-
-
-(*(*Ajoute le node dans le fs au dossier correspodant à path_p*)
-val add_node : filesystem -> path -> node -> filesystem*)
-
 (*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
 val add_to_dir : path -> directory -> node -> directory

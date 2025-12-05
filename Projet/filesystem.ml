@@ -19,17 +19,6 @@ type filesystem = {
   current_path: path 
    }
 
-(*fs =
-/usr
-/texte.txt
-mkdir fs nouveau 
-fs = /usr
-      /texte.txt
-      /nouveau*)
-(* Les déclarations des deux types suivants sont mutuellement récursifs:
-  - le type directory des répertoires est un enregistrement dont le champ children contient une liste de node
-  - le type node est un type de données algébrique dont un des constructeurs encapsule une valeur de type directory
-*)
 
 
 let init () =
@@ -57,12 +46,7 @@ let rec estPresentBis node_name liste =
             |Dir d -> if d.name=node_name then Some (Dir d) else estPresentBis node_name xs
             end
 
-(*!!!!!!!!!!!!!!!!pas besoin*)
-(*let concat a b = match a,b with
-                  |Name a,Name b -> Name (a^b)*)
 
-(*fonction qui permet de vérifer si le nom d'un node contient un "/" dans l'utilisation de touch ou mkdir
-elle prends en paramétre un string, et retourne None si ce string contient un caractére '/' et le Name de ce string sinon*)
 (*??????*)
 let isName str = 
   let lst = List.of_seq(String.to_seq str) (*je voulais créer une liste de chaine de caractère du string str*)
@@ -131,6 +115,7 @@ let cd_current_dir fs path_p =
             |File _f -> None )
       )
   in aux path_p fs.root 
+
 
 (*cette fonction permet de supprimer le dernier dernier éléent d'une liste est renvoie la liste restant, on l'utilise dans cd pour '..' dans le chemin*)
 let removeLast p:path = 
@@ -217,23 +202,5 @@ let rec add_to_dir path_p dir_p node_p =
                 else node
           |File _ ->  node) dir_p.children 
       in {name=dir_p.name; children=new_children}
-      (*let rec aux l =
-        match l with 
-          |y::ys -> begin match y with 
-            |Dir d -> if x = d.name then add_to_dir xs d node_p
-            |File _fl -> aux ys end
-          |[] -> None 
-      in aux dir_p.children*)
               
 
-
-(*Ajoute le node dans le fs au dossier correspodant à path_p*)
-(*let add_node fs path_p node =
-  let rec aux c_dir l = 
-    match path_p with
-      |[] -> let d = cd_current_dir fs path_p in begin
-        match d with
-          |Some d' -> let dr = estPresentBis (File node) (*vérifier dans le dir_courant et l'ajouer, reconcstruire l'arbre*)
-        (*let new_root = {name=fs.root.name; children = c_dir::fs.root.children }
-    in {root=new_root; current_path=[]}*)
-      |x::xs -> remove fs.current_path x.name*)
