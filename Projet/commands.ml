@@ -21,7 +21,7 @@ let mkdir nameD fs =
     |Some d -> let nd = estPresentBis nameD d.children
             in begin
                 match nd with 
-                |None -> let new_dir = add_to_dir fs.current_path fs.root (Dir ({name=nameD; children=[]}))
+                |None -> let new_dir = {name=fs.root.name; children=(Dir {name=nameD;children=[]})::fs.root.children}
                             in {root=new_dir; current_path=fs.current_path}
                 |Some ndO-> begin 
                     match ndO with 
@@ -31,7 +31,7 @@ let mkdir nameD fs =
                                     fs
                             end
                 end
-    |None -> print_string "";fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
+    |None -> print_string "yes";fs (*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
 
 (*touch*)
 let touch file_name fs = match Filesystem.isName file_name with
@@ -56,13 +56,11 @@ let touch file_name fs = match Filesystem.isName file_name with
 
 
 (*ls directory_name*)
-let ls fs = let d = cd_current_dir fs fs.current_path in
-    match d with 
-    |Some d' -> if d'.children = [] then print_endline "Ce répertoire vide"
-        else begin 
-        let rec aux l = match l with
-            |[]->print_string ""
-            |x::xs-> begin
+let ls fs = if fs.root.children = [] then print_endline "Ce répertoire vide"
+    else begin 
+    let rec aux l = match l with
+        |[]->print_endline ""
+        |x::xs-> begin
             match x with 
                 |File fl-> begin match fl.name with 
                             | Name s->print_endline s; 
@@ -71,9 +69,8 @@ let ls fs = let d = cd_current_dir fs fs.current_path in
                             | Name s->print_endline (s^"/");
                                 aux xs end
             end
-        in aux d'.children
-        end
-    |None -> print_string "" (*on n'affiche rien, ce cas ne devrait jamais arriver si le current path est bien créer et bien gérer lors de l'éxécution des commandes*)
+    in aux fs.root.children
+    end
 
 (*cat file_name*)
 let cat file_name fs = let file_name' = Filesystem.isName file_name
@@ -107,7 +104,7 @@ retourne un couple de boléen et un filsystem qui indique si on s'est déplacé 
 mais avec un current_path probabablement différent  *)
 (*ok/error constructor*)
 let cd nom_chemin fs = 
-    let rec aux lst acc dir_p= 
+    let rec aux lst acc = 
         match lst with 
         |[] -> true,{root=fs.root;current_path=acc}
         |x::xs->
@@ -117,20 +114,13 @@ let cd nom_chemin fs =
                     |[] -> print_endline "Vous êtes déjà à la racine cd .. ne marche plus" ; []
                     |_ -> removeLast acc 
                     end
-                in  begin 
-                    match cd_current_dir fs acc' with 
-                        |Some d -> aux xs acc' d
-                        |None -> false,fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
-                    end
+                in aux xs acc'
             else(begin 
-                match estPresentBis (Name x) dir_p.children with(*peut être enlever search et mettre isPresent*)
+                match Filesystem.search fs.root.children (Name x) with(*peut être enlever search et mettre isPresent*)
                     |None -> print_endline "cd : ce chemin est invalide"; false,fs
-                    |Some y -> begin  match y with
-                        | Dir d -> aux xs (acc@[d.name]) d
-                        | File _ -> print_endline "cd : ce chemin est invalide"; false,fs
-                    end
+                    |Some y -> aux xs (acc@[y.name])
                 end)
-    in aux nom_chemin fs.current_path fs.root
+    in aux nom_chemin fs.current_path
 
 
 (*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
@@ -198,12 +188,12 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
     |None ->print_endline"Erreur"; fs
     |Some dir -> 
         match estPresentBis node_name dir.children with
-           |None -> print_endline "rm: un dossier ou fichier de ce nom n'existe pas le répertoire"; fs
+           |None -> print_endline "Elt pas present"; fs
            |Some _ -> 
             let new_children = removeBis dir.children node_name in
-            let dir_nouveau = {name=dir.name; children = new_children}  in  
+            let dir_nouveau = {dir with children = new_children}  in  
             let new_root = Filesystem.replace_dir fs.root fs.current_path dir_nouveau 
-                      in {root = new_root;current_path=fs.current_path}
+    in {fs with root = new_root}
 
 
 
@@ -218,6 +208,24 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
       if estPresentBis node_name dir.children = None then
         (print_endline "élément introuvable"; fs)
       else *)
+
+      
+let cp node_name path fs =
+  match cd_current_dir fs fs.current_path with
+  | None ->
+      print_endline "Erreur: répertoire courant invalide";
+      fs
+  | Some dir -> 
+      match estPresentBis node_name dir.children with
+          |None -> print_endline "cp: elts introuvable"; fs
+          |Some elt ->  let start_copie = copieBis elt in
+              match cd_current_dir fs path with
+               |None -> print_endline "cp : chemin cible invalide"; fs
+               |Some dir -> match estPresentBis node_name dir.children with
+                               |Some _ -> print_endline"cp: un elt de ce nom existe déjà"; fs
+                               |None -> 
+                                      let dir_nouveau = {dir with children = start_copie :: dir.children} in
+let nouveau_root = Filesystem.replace_dir fs.root path dir_nouveau in {fs with root = nouveau_root}
       
   
       
