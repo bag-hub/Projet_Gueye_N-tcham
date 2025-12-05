@@ -85,7 +85,7 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             (*Commande find  action*)
         |"find"::tockens' -> begin
            match tockens' with
-            | [x] -> find (Name x) fs; loop fs
+            | x::[] -> find (Name x) fs; loop fs
             | _ -> print_endline "find: cette commande prend exactement un argument"; loop fs
          end
 
