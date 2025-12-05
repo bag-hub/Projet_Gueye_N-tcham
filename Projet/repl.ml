@@ -88,6 +88,15 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             | x::[] -> find (Name x) fs; loop fs
             | _ -> print_endline "find: cette commande prend exactement un argument"; loop fs
          end
+           (*Commande cp action*)
+         |"cp" :: tockens' -> begin
+          match tockens' with
+          | x::xs::[] -> let fs' = cp (Name x) (split_sh xs) fs in 
+           loop fs'
+          |_->print_endline"cp error"; loop fs
+         end
+
+
 
 
         | command :: _ ->

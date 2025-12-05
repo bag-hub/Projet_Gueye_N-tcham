@@ -49,7 +49,8 @@ let touch file_name fs = match Filesystem.isName file_name with
                                         end
                             |None-> let nouveau_root = {name=fs.root.name;children=(File {name=file_name';content=""})::fs.root.children} in {root=nouveau_root;current_path=fs.current_path}
                         end
-            |None -> fs(*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier *)
+            |None -> fs(*On n'est sur de ne jamais atteindre ce cas car le current_path du filesystem est bien fait donc chaque name correspond forcément à un dossier, 
+                    on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier *)
                     end
     |None -> print_endline "touch: Le nom d'un ne doit pas contenir le caractére '/'";
             fs
@@ -122,7 +123,8 @@ let cd nom_chemin fs =
                 in  begin 
                     match cd_current_dir fs acc' with 
                         |Some d -> aux xs acc' d
-                        |None -> false,fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier, on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
+                        |None -> false,fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier, 
+                                on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
                     end
             else(begin 
                 match estPresentBis (Name x) dir_p.children with(*peut être enlever search et mettre isPresent*)
@@ -133,49 +135,8 @@ let cd nom_chemin fs =
                     end
                 end)
     in aux nom_chemin fs.current_path c_dir end
-    |None -> false,fs
-(*
-let cd nom_chemin fs =
-  let rec aux lst acc dir_p =
-    match lst with
-    | [] ->
-        true, { root = fs.root; current_path = acc }
-
-    | x :: xs ->
-        if x = ".." then
-          let acc' =
-            match acc with
-            | [] ->
-                print_endline "Vous êtes déjà à la racine cd .. ne marche plus";
-                []
-            | _ ->
-                removeLast acc
-          in
-          (* Aller vers le parent *)
-          begin
-            match cd_current_dir fs acc' with
-            | Some d -> aux xs acc' d
-            | None   -> false, fs
-          end
-
-        else
-          (* Aller vers un sous-répertoire *)
-          match estPresentBis (Name x) dir_p.children with
-          | None ->
-              print_endline "cd : ce chemin est invalide";
-              false, fs
-
-          | Some y ->
-              match y with
-              | Dir d ->
-                  aux xs (acc @ [ d.name ]) d
-              | File _ ->
-                  print_endline "cd : ce chemin est invalide";
-                  false, fs
-  in
-  aux nom_chemin fs.current_path fs.root
-
-*)
+    |None -> false,fs (*Ce cas ne devrait jamais arriver dans le cas où le current_path du filesystem est bien fait, donc chaque name correspond forcément à un dossier,
+             on s'assure de garder ces propriété lors de la création ou la suppresion d'un dossier  *)
 
 
 (*mv nomdelelement nomduchemin qui permet de déplacer un fichier ou un réper-
