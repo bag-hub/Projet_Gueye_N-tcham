@@ -190,7 +190,7 @@ let rm node_name fs = match cd_current_dir fs fs.current_path with
            |None -> print_endline "Elt pas present"; fs
            |Some _ -> 
             let new_children = removeBis dir.children node_name in
-            let dir_nouveau = {dir with children = new_children}  in  
+            let dir_nouveau = {name = dir.name; children = new_children}  in  
             let new_root = Filesystem.replace_dir fs.root fs.current_path dir_nouveau 
     in {fs with root = new_root}
 
