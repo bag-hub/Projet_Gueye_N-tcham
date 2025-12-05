@@ -256,3 +256,15 @@ let touchEx path_p fs =
         
         |None -> print_endline "touch: Chemin invalide";fs )
     |[] -> print_endline "touch: Chemin invalide";fs
+
+
+
+    (*rmext command idée*)
+let rmext chemin fs = 
+     let elts = List.map (fun x -> Name x) (split_sh chemin) in 
+          match elts with
+            |[] -> (print_endline "rmext: chemin introuvable"; fs)
+            |_::_ -> (
+               match dernier_elt elts with
+                |None -> print_endline "rmext: chemin vide"; fs
+                |Some cib -> rm cib fs)

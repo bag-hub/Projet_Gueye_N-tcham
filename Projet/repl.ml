@@ -88,7 +88,9 @@ let rec loop (fs : Filesystem.filesystem) : unit =
             end
         |"rm"::tockens' -> begin
           match tockens' with
-          |x::[] -> let fs' = rm (Name x) fs in loop fs'
+          |x::[] -> if x.[0]<>'.' then let fs' = rm (Name x) fs in loop fs'
+                  else (let fs' = let len = String.length x in rmext (String.sub x 0 (len-1)) fs 
+                                  in loop fs')
           |_ -> print_endline "rm: cette commande prend exactement un argument"; loop fs 
         end
 

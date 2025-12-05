@@ -197,5 +197,14 @@ let rec add_to_dir path_p dir_p node_p =
                 else node
           |File _ ->  node) dir_p.children 
       in {name=dir_p.name; children=new_children}
+
+
+
+(*Une fonction qui me pert de retourner le dernier elt*)
+let rec dernier_elt liste = 
+     match liste with 
+        |[]-> None
+        |x::[] -> Some x
+        |_::xs -> dernier_elt xs
               
 

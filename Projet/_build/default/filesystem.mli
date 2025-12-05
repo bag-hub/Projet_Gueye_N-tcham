@@ -57,3 +57,7 @@ val copieBis : node -> node
 
 (*Ajoute node au directory donné en argument en suivant le chemin relatif path*)
 val add_to_dir : path -> directory -> node -> directory
+
+
+(*Recuperer le dernier elts de path qu' on a transformer en une liste de name*)
+val dernier_elt : name list -> name option
